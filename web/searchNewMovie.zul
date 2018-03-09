@@ -1,0 +1,68 @@
+ 
+<window 
+    id="searchNewMovie"
+    apply="org.zkoss.bind.BindComposer"
+    width="500px"
+    viewModel="@id('vm') @init('com.enseval.ttss.vm.SearchNewMovieVM')" 
+    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+    vflex="1" 
+    mode="modal"
+    position="center,top"
+    title="SEARCH MOVIE FROM TMDB"
+    closable="true"
+    border="normal">
+    <grid model="@load(vm.listSearch)" mold="paging" emptyMessage="no data" height="600px" width="100%">
+        <custom-attributes org.zkoss.zul.nativebar="true"/>  
+        <auxhead>
+            <auxheader>
+                <hlayout>
+                    <radiogroup  id="rg"
+                                 selectedItem="@bind(vm.searchType)"
+                                 vflex="3">
+                        <radio class="input-group-addon" label="Movie" value="movie"/>
+                        <radio class="input-group-addon" label="Series" value="tv"/>
+                    </radiogroup>
+                      <checkbox checked="@bind(vm.isFixMode)" label="fix mode" sclass="input-group-addon"/>
+                    <textbox value="@bind(vm.keywords)" hflex="3" height="100%" sclass="form-control" onOK="@command('search')"/>
+                    <button onClick="@command('search')" sclass="btn-primary" iconSclass="glyphicon glyphicon-search"></button>
+                </hlayout>
+            </auxheader>
+        </auxhead>
+        <columns>
+            <column/>
+        </columns>
+        <template name="model" var="s">
+            <row>
+                <hlayout sclass="detail">
+           
+                    <image width="95px" style="margin: 8px"
+                           src="@load(s.poster)" />
+                    <vlayout>
+                        <hlayout sclass="detail-row">
+                            <label value="TMDB ID :" />
+                            <toolbarbutton label="@load(s.tmdbId)" href="@load('https://www.themoviedb.org/movie/'.concat(s.tmdbId))" target="_blank" style="font-weight: bold;"/>
+                            <hlayout hflex="3" style="text-align:right;padding-right:20px">
+                                S : <textbox width="30px" value="@save(vm.season)" disabled="@load(vm.searchType ne 'tv')"/>
+                                Ep : <textbox width="30px" value="@save(vm.episode)" disabled="@load(vm.searchType ne 'tv')"/>
+                                <button sclass="btn-xs btn-success" onClick="@command('selectMovie',tmdbId=s.tmdbId)">SELECT</button>
+                            </hlayout>
+                        </hlayout>
+                        <hlayout sclass="detail-row">
+                            <label value="Title :"/>
+                            <label value="@load(s.title)" style="font-weight: bold;"/>
+                        </hlayout>
+                        <hlayout sclass="detail-row">
+                            <label value="Year :"/>
+                            <label value="@load(s.year)" style="font-weight: bold;"/>
+                        </hlayout>
+                        <textbox value="@load(s.synopsis)" multiline="true" width="350px" readonly="true" rows="3"/>
+                        
+                        
+                    </vlayout>
+                    
+                </hlayout>
+            </row>
+        </template>
+          
+    </grid>
+</window>

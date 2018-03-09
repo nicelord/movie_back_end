@@ -1,0 +1,158 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<window id="mainWin" title="DAFTAR SERAH TERIMA SETORAN MASUK" vflex="3" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuBacktrapVM')">
+    <borderlayout>
+        <center>
+            <listbox id="listBacktrap" mold="paging" width="100%" vflex="true" autopaging="true" 
+                     checkmark="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}" 
+                     multiple="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}" 
+                     selectedItems="@bind(vm.listSelectedBacktrap)"
+                     emptyMessage="Tidak ada data"
+                     model="@load(vm.listBacktrap)">        
+                                             
+                <custom-attributes org.zkoss.zul.listbox.rod="true" 
+                                   if="${sessionScope.userCredential.getRoles()=='KASIR' || sessionScope.userCredential.getRoles()=='SUPERVISOR'}"/>
+                     
+                        
+                <listhead sizable="true" visible="true" >
+                    <listheader width="30px" />
+                    <listheader sort="auto(id)" label="ID" width="50px"/>
+                    <listheader sort="auto(nilai)" label="NILAI" width="180px" />
+                    <listheader sort="auto(userBacktrap.nama)" label="PENYETOR"/>
+                    <listheader sort="tag" label="TAG"/>
+                    <listheader sort="auto(createDate)" label="WKT TITIP"/>
+                </listhead>
+                        
+                <auxhead>
+                    <auxheader>
+                        <image id="" src="img/filter.png" width=""  height=""/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNomor)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNilai)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterPenyetor)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterTag)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    
+                    <auxheader>
+                        <button popup="popupTimeChooser" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                          
+                        <popup id="popupTimeChooser" width="200px" style="word-wrap">
+                            <vlayout>
+                                <label value="Dari :" />
+                                <datebox id="startDate" value="@bind(vm.tsAwal)" format="yyyy-MM-dd HH:mm" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <label value="Sampai :" />
+                                <datebox id="endDate" value="@bind(vm.tsAkhir)" format="yyyy-MM-dd HH:mm" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <div class="btn-group" hflex="3">
+                                    <button label="TAMPILKAN" onClick="@command('saringTgl')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="RESET" onClick="@command('resetSaringWkt')" sclass="btn-default btn-xs" hflex="3" >
+                                        <attribute name="onClick">
+                                            startDate.setText("");
+                                            endDate.setText("");
+                                        </attribute>
+                                    </button>
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+                </auxhead>
+                    
+                <template name="model" var="s">
+                    <listitem sclass="mainList" onClick="@command('showDetail', BT=s)">
+                        <listcell />
+                        <listcell label="@load(s.id)"/>
+                        <listcell label="@load(vm.format(s.nilai))"/>
+                        <listcell label="@load(s.userBacktrap.nama.toUpperCase())" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                        <listcell label="@load(s.tag)"/>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(s.createDate) @converter('formatedDate', format='yyyy-MM-dd hh:mm')"/>
+                        </listcell>
+                    </listitem>
+                </template>
+                    
+                <listfoot>
+                    <listfooter span="6" valign="middle">
+                        <div style="float:left;">
+                            <image id="" src="img/arrow_ltr.png" width=""  height=""/>
+                            Printer : 
+                            <combobox id="printer"  model="@load(vm.printers)" value="@load(vm.userLogin.defPrinter.namaPrinter) @save(vm.printernya)" hflex="3" vflex="3" readonly="true" constraint="no empty">
+                                <template name="model">
+                                    <comboitem label="@load(each.namaPrinter)" />
+                                </template>
+                            </combobox>
+                            <button onClick="@command('cetakMultiple')" hflex="3" sclass="btn-danger" iconSclass="glyphicon glyphicon-print" label="MULTI CETAK" 
+                                    if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}"/>
+                        </div>
+                        <div style="float:right;">
+                            <label value="TOTAL NILAI "/>
+                            <label value="@load(vm.format(vm.totalNilai))"/>
+                            <label value=" "/>
+                        </div>
+                    </listfooter>
+                </listfoot>		
+            </listbox>
+                
+        </center>
+        <east title="DETAIL" size="35%" splittable="true" collapsible="true">
+            <div vflex="3" hflex="3">
+                <vbox align="center" hflex="3" vflex="3">
+                    <grid hflex="3" vflex="3">
+                        <columns>
+                            <column align="left" width="25%"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                NOMOR
+                                <label value="@load(vm.selectedBacktrap.id)"/>
+                            </row>
+                            <row>
+                                NILAI
+                                <label value="@load(vm.format(vm.selectedBacktrap.nilai).toUpperCase())"/>
+                            </row> 
+                            <row>
+                                TERBILANG
+                                <label value="@load(vm.terbilang(vm.selectedBacktrap.nilai))"/>
+                            </row> 
+                                    
+                            <row>
+                                PENYETOR
+                                <label value="@load(vm.selectedBacktrap.userBacktrap.nama.toUpperCase())"/>
+                            </row>
+                            <row>
+                                TAG
+                                <label value="@load(vm.selectedBacktrap.tag.toUpperCase())"/>
+                            </row>
+                            <row>
+                                WAKTU TITIP
+                                <label value="@load(vm.selectedBacktrap.createDate)"/>
+                            </row>
+                            <row>
+                                KETERANGAN
+                                <textbox multiline="true" rows="5" hflex="3" value="@load(vm.selectedBacktrap.keterangan)" readonly="true">
+                                                   
+                                </textbox>
+                            </row> 
+                        </rows>
+                        <foot>
+                            <footer span="2">
+                                <hlayout>
+                                    <button onClick="@command('cetak')" hflex="3" sclass="btn-danger" iconSclass="glyphicon glyphicon-print" label="CETAK" 
+                                           if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}"/>
+                                </hlayout>
+                            </footer>
+                        </foot>
+                    </grid>
+                </vbox>
+                      
+            </div>
+        </east>
+    </borderlayout>
+</window>

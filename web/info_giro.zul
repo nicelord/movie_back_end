@@ -1,0 +1,200 @@
+<?page title="INFO GIRO" ?>
+<?link rel="stylesheet" type="text/css" href="css/style.css"?>
+<window id="mainWin" title="INFO GIRO" vflex="true" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuGiroPublicVM')">
+    <borderlayout>
+        <center>
+            <listbox id="listGiro" 
+                     mold="paging" width="100%" vflex="true" autopaging="true" 
+                     emptyMessage="Tidak ada data"
+                     model="@load(vm.listGiro)">     
+                <listhead sizable="true" visible="true" >
+                    <listheader sort="auto(nomorGiro)" label="NO GIRO"/>
+                    <listheader sort="auto(bank)" label="BANK"/>
+                    <listheader sort="auto(nilai)" label="NILAI" width="150px" />
+                    <listheader sort="auto(namaPenyetor)" label="PENYETOR"/>
+                    <listheader sort="auto(customer.nama)" label="CUSTOMER"/>
+                    <listheader sort="auto(DKLK)" label="DK/LK" width="50px"/>
+                    <listheader sort="auto(wktTerima)" label="WKT TERIMA"/>
+                    <listheader sort="auto(tglJtTempo)" label="JT TEMPO"/>
+                    <listheader sort="auto(tglKliring)" label="TGL KLIRING"/>
+                    <listheader sort="auto(status)" label="DOKUMEN" width="130px" />
+                    <listheader label="PROGRESS"/>
+                    <listheader label=""/>
+                </listhead>
+                        
+                <auxhead>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNomorGiro)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterBank)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNilai)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterPenyetor)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterCustomer)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <button popup="popupDKLK" iconSclass="glyphicon glyphicon-filter" label="" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                          
+                        <popup id="popupDKLK" width="250px" style="word-wrap">
+                            <vlayout>
+                                <div class="btn-group" hflex="3">
+                                    <button label="ALL" onClick="@command('resetFilterDKLK')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="DK" onClick="@command('filterDK')" sclass="btn-default btn-xs" hflex="3" />
+                                    <button label="LK" onClick="@command('filterLK')" sclass="btn-default btn-xs" hflex="3" />
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+                    <auxheader>
+                        <button popup="popupTimeChooser" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                          
+                        <popup id="popupTimeChooser" width="200px" style="word-wrap">
+                            <vlayout>
+                                <label value="Dari :" />
+                                <datebox id="startDate" value="@bind(vm.tsAwal)" format="yyyy-MM-dd HH:mm" readonly="true" hflex="3"/>
+                                <label value="Sampai :" />
+                                <datebox id="endDate" value="@bind(vm.tsAkhir)" format="yyyy-MM-dd HH:mm" readonly="true" hflex="3"/>
+                                <div class="btn-group" hflex="3">
+                                    <button label="TAMPILKAN" onClick="@command('saringTgl')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="RESET" onClick="@command('resetSaringWkt')" sclass="btn-default btn-xs" hflex="3" >
+                                        <attribute name="onClick">
+                                            startDate.setText("");
+                                            endDate.setText("");
+                                        </attribute>
+                                    </button>
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+                    
+                    <auxheader>
+                        <button popup="popTimeJtTempo" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                          
+                        <popup id="popTimeJtTempo" width="200px" style="word-wrap">
+                            <vlayout>
+                                <label value="Dari :" />
+                                <datebox id="startDateJtTempo" value="@bind(vm.tglJtTempoAwal)" format="yyyy-MM-dd" readonly="true" hflex="3"/>
+                                <label value="Sampai :" />
+                                <datebox id="endDateJtTempo" value="@bind(vm.tglJtTempoAkhir)" format="yyyy-MM-dd" readonly="true" hflex="3"/>
+                                <div class="btn-group" hflex="3">
+                                    <button label="TAMPILKAN" onClick="@command('saringTglJtTempo')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="RESET" onClick="@command('resetSaringTglJtTempo')" sclass="btn-default btn-xs" hflex="3" >
+                                        <attribute name="onClick">
+                                            startDateJtTempo.setText("");
+                                            endDateJtTempo.setText("");
+                                        </attribute>
+                                    </button>
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+        
+                    <auxheader>
+                        <button popup="popTimeKliring" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                          
+                        <popup id="popTimeKliring" width="200px" style="word-wrap">
+                            <vlayout>
+                                <label value="Dari :" />
+                                <datebox id="startDateKliring" value="@bind(vm.tglKliringAwal)" format="yyyy-MM-dd" readonly="true" hflex="3"/>
+                                <label value="Sampai :" />
+                                <datebox id="endDateKliring" value="@bind(vm.tglKliringAkhir)" format="yyyy-MM-dd" readonly="true" hflex="3"/>
+                                <div class="btn-group" hflex="3">
+                                    <button label="TAMPILKAN" onClick="@command('saringTglKliring')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="RESET" onClick="@command('resetSaringTglKliring')" sclass="btn-default btn-xs" hflex="3" >
+                                        <attribute name="onClick">
+                                            startDateJtTempo.setText("");
+                                            endDateJtTempo.setText("");
+                                        </attribute>
+                                    </button>
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+                    
+                    <auxheader>
+                        <button popup="popStatus" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                        <popup id="popStatus" width="150px" style="word-wrap">
+                            <div class="btn-group-vertical" hflex="3">
+                                <button label="ALL" onClick="@command('filterStatus',status='ALL')" sclass="btn-info btn-xs"/>
+                                <button label="OK" onClick="@command('filterStatus', status='OK')" sclass="btn-default btn-xs" hflex="3" />
+                                <button label="LAMPIRAN KURANG" onClick="@command('filterStatus', status='LAMPIRAN KURANG')" sclass="btn-default btn-xs"/>
+                            </div>
+                        </popup>
+                    </auxheader>
+                    
+                    <auxheader>
+                        <button popup="popProgress" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                        <popup id="popProgress" width="150px" style="word-wrap">
+                            <div class="btn-group-vertical" hflex="3">
+                                <button label="ALL" onClick="@command('filterProgress',status='ALL')" sclass="btn-default btn-xs"/>
+                                <button label="done" onClick="@command('filterProgress',status='done')" sclass="btn-success btn-xs"/>
+                                <button label="pending" onClick="@command('filterProgress', status='pending')" sclass="btn-warning btn-xs" hflex="3" />
+                                <button label="ditolak" onClick="@command('filterProgress', status='ditolak')" sclass="btn-danger btn-xs" hflex="3" />
+                                <button label="batal" onClick="@command('filterProgress', status='batal')" sclass="btn-default btn-xs" hflex="3" />
+                            
+                            </div>
+                        </popup>
+                    </auxheader>
+                </auxhead>
+                    
+                <template name="model" var="g">
+                    <listitem sclass="mainList">
+                        <listcell label="@load(g.nomorGiro)"/>
+                        <listcell label="@load(g.bank)"/>
+                        <listcell label="@load(vm.format(g.nilai))"/>
+                        <listcell label="@load(g.namaPenyetor.toUpperCase())" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                        <listcell label="@load(g.customer.nama)"/>
+                        <listcell label="@load(g.DKLK)"/>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(g.wktTerima) @converter('formatedDate', format='yyyy/MM/dd hh:mm')"/>
+                        </listcell>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(g.tglJtTempo) @converter('formatedDate', format='yyyy/MM/dd')"/>
+                        </listcell>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(g.tglKliring) @converter('formatedDate', format='yyyy/MM/dd')"/>
+                        </listcell>
+                        <listcell label="@load(g.status)"/>
+                        <listcell>
+                            <span class="label label-success" visible="@load(g.prosesKliring eq 'DONE')">
+                                done
+                            </span>
+
+                            <span class="label label-warning" visible="@load(g.prosesKliring eq 'PENDING')">
+                                pending
+                            </span>
+                            <span class="label label-default" visible="@load(g.prosesKliring eq 'BATAL')">
+                                batal
+                            </span>
+                            <span class="label label-danger" visible="@load(g.prosesKliring eq 'DITOLAK')">
+                                ditolak
+                            </span>
+                        </listcell>
+                        <listcell>
+                            <button vflex="3" hflex="3" sclass="btn-primary btn-xs" label="DETAIL" onClick="@command('detailGiro',giro=g)" />
+                        </listcell>
+                    </listitem>
+                    
+                </template>
+                    
+                <listfoot>
+                    <listfooter span="12" valign="middle">
+                        
+                    </listfooter>
+                </listfoot>	
+                	
+            </listbox>
+        </center>
+    </borderlayout>
+
+</window>

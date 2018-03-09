@@ -1,0 +1,42 @@
+<?init class="com.enseval.ttss.util.InitLogin"?> 
+<!--<?forward uri="/home.zul" if="${not sessionScope.userCredential.anonymous}"?>-->
+<zk>
+    <style>
+        .btn,.form-control,.z-combobox-input,.z-combobox-popup,.z-combobox-button,.z-textbox,.z-intbox, .z-intbox-invalid{
+        border-radius:                    0px;
+        -webkit-border-radius:            0px;
+        -moz-border-radius:               0px;
+        }
+        
+        .z-window{
+        background: #3F89C7;
+        }
+        
+        body *:not([class*="glyphicon"]):not([class*="z-icon-"])  {
+        font-family: "Segoe UI";
+        font-size: 13px;
+        }
+        
+    </style>
+    
+    <hbox vflex="1" hflex="1" align="center" pack="center" spacing="20px">
+        
+        <vlayout>
+            <window title="INCOMPATIBLE BROWSER NOTICE" border="normal" hflex="min" mode="modal">
+                <vbox hflex="min" align="center">
+                    
+                    <label multiline="true"> Kami mendeteksi browser anda tidak kompatibel dengan aplikasi ini.
+                        Untuk menggunakan aplikasi ini disarankan menggunakan Google Chrome.
+                    </label>
+                    
+                  
+                    <button hflex="3" sclass="btn-success btn-lg" iconSclass="glyphicon glyphicon-save" style="font-size:20px;" href="chrome-offline-installer.exe">
+                        DOWNLOAD GOOGLE CHROME
+                    </button>
+                 
+                    
+                </vbox>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

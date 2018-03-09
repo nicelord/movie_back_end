@@ -1,0 +1,40 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<?link rel="stylesheet" type="text/css" href="css/style.css"?>
+    
+<zk>
+    <borderlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.NavigationVM')" onBookmarkChange="@command('changePage')">
+        <north height="40px" >
+            <hlayout vflex="1" valign="middle" sclass="header">
+                <hbox hflex="1" vflex="1" pack="start" align="middle">
+                    <separator />
+                    <separator />
+                    <label id="" value="MOVIE DB"/>
+                </hbox>
+                <hbox hflex="1" pack="end">
+                    <label id="" value="${sessionScope.userCredential.name}"/>
+                    <separator />
+                    <label id="" value="( ${sessionScope.userCredential.account} )"/>
+                    <separator />
+                    <button sclass="btn-warning btn-xs" iconSclass="glyphicon glyphicon-log-out" label="LOGOUT" onClick="@command('logout')"/>
+                </hbox>
+            </hlayout>
+        </north>
+        
+        <west title="NAVIGATION" size="10%" maxsize="200" splittable="true" collapsible="true" border="normal" hflex="true">
+            <include src="sidebar.zul"/>
+        </west>
+        <center border="normal" hflex="true" autoscroll="true" self="@insert(content)">
+            
+        </center>
+
+        <south height="30px">
+            <div hflex="1" vflex="1" sclass="footer" align="center">
+                ACE MOVIE
+            </div>
+            
+        </south>
+        
+    </borderlayout>
+    
+</zk>

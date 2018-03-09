@@ -1,0 +1,118 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+        
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+    </style>
+
+    <borderlayout>
+        <center>
+            <window id="opname"  
+                    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;"
+                    vflex="3"
+                    title="CASH OPNAME" 
+                    apply="org.zkoss.bind.BindComposer" 
+                    viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuInputCashOpname')">
+                
+                <grid>
+                    <columns>
+                        <column align="right" width="30%"/>
+                        <column style="floating:left;"/>
+                    </columns>
+                    <rows>
+                        <row>
+                            CUT OFF DATE
+                            <datebox id="cutOffDate" 
+                                     format="dd/MMMM/yyyy" 
+                                     constraint="no future: now or never" 
+                                     readonly="true" 
+                                     buttonVisible="false"
+                                     width="300px"
+                                     value="@bind(vm.opnameBaru.tglCutoff)"/>
+                            
+                        </row>
+                        <row>
+                            
+                            JENIS KAS : 
+                            <combobox id="cmbJenisKas" readonly="true" width="300px" 
+                                      constraint="no empty" 
+                                      value="@bind(vm.opnameBaru.jenisKas)">
+                                <comboitem label="SEMUA"/>
+                                <comboitem label="KAS TRANSFER"/>
+                                <comboitem label="KAS DROPPING"/>
+                            </combobox>
+                               
+                        </row>
+                        <row>
+                            
+                            SALDO FISIK
+                            
+                            <div class="input-group" width="300px">
+                                <span class="input-group-addon">Rp.</span>
+                                <longbox class="form-control input-primary" 
+                                        id="saldoFisik"
+                                         maxlength="20" 
+                                         format=",###.#" 
+                                         value="@bind(vm.opnameBaru.saldoFisik)"
+                                         constraint="no empty,no negative"/>
+                                <span class="input-group-addon">,00</span>
+                            </div>
+                                 
+                        </row>
+                        
+                        <row>
+                            <separator />
+                            <separator spacing="20px" width="300px" bar="true"/>
+                                    
+                        </row>
+                        <row>
+                            USER
+                            <textbox id="user" width="300px" value="@bind(vm.opnameBaru.pelaksana)" sclass="form-control input-primary" readonly="true"/> 
+                                    
+                        </row>
+                        <!--
+                        <row>
+                            DATE
+                            <datebox id="inputDate" 
+                                     format="dd/MMMM/yyyy hh:mm:ss" 
+                                     constraint="no future: now or never" 
+                                     readonly="true" 
+                                     buttonVisible="false"
+                                     width="300px"/>        
+                        </row>
+                        -->
+                        
+                    </rows>
+                    <foot>
+                        <footer>
+                            
+                        </footer>
+                        <footer align="right">
+                            <div class="btn-group" style="float:left;">
+                                <button onClick="@command('submitOpname')" sclass="btn-success" iconSclass="glyphicon glyphicon-floppy-disk" label="SAVE" >
+                                    <attribute name="onClick">
+                                       <!-- inputDate.setValue(new Date()); -->
+                                        cmbJenisKas.getValue();
+                                        saldoFisik.getValue();
+                                    </attribute>
+                                </button>
+                            </div>
+                        </footer>
+                    </foot>
+                </grid>
+               
+            </window>
+        </center>
+    </borderlayout>
+</zk>

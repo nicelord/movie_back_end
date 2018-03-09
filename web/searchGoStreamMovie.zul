@@ -1,0 +1,65 @@
+ 
+<window 
+    id="searchGoStreamMovie"
+    apply="org.zkoss.bind.BindComposer"
+    width="700px"
+    viewModel="@id('vm') @init('com.enseval.ttss.scrapper.gostream.SearchGoStreamMovieVM')" 
+    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+    vflex="1" 
+    mode="modal"
+    position="center,top"
+    title="SEARCH MOVIE"
+    closable="true"
+    border="normal">
+    <listbox id="listMovies" width="100%" height="500px" autopaging="true" 
+             model="@load(vm.moviePageLink)"   
+             selectedItems="@bind(vm.listSelectedMoviePage)"    
+             checkmark="true" 
+             multiple="true" 
+             emptyMessage="no data">    
+        <custom-attributes org.zkoss.zul.nativebar="true"/>  
+        
+        <auxhead>
+            <auxheader colspan="4">
+                <hlayout>
+                    <textbox hflex="3" sclass="form-control" value="@bind(vm.keywords)"/>
+                    <button sclass="btn-primary" iconSclass="glyphicon glyphicon-search" onClick="@command('search')"/>
+                </hlayout>
+                
+            </auxheader>
+        </auxhead>  
+          
+        <listhead sizable="true" visible="true" >
+            <listheader width="30px" />
+            <listheader sort="link" label="Url"/>
+            <listheader label="Episode" width="150px"/>
+            <listheader label="Actions" width="90px"/>
+        </listhead> 
+        <template name="model" var="s">
+            <listitem sclass="mainList">
+                <listcell />
+                <listcell label="@load(s)" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                <listcell>
+                    <hlayout>
+                      <checkbox label="exact" checked="@save(vm.fixedEpisodeTitle)" sclass="input-group-addon"/>  
+                      <textbox hflex="3" sclass="form-control" value="@save(vm.episode)"/>
+                    </hlayout>
+                    
+                </listcell>
+                <listcell>
+                    <hlayout>
+                        <button onClick="@command('addSelectedItemToScrapper', url=s)">SELECT</button>
+                    </hlayout>
+                </listcell>
+            </listitem>
+        </template>
+        
+        <listfoot>
+            <listfooter valign="middle" span="4">
+                <div style="float:right;">
+                    <button onClick="@command('addAllSelectedToScrapper')"  sclass="btn-success" label="ADD SELECTED TO SCRAPPER" disabled="@bind(vm.selectedMoviePage.isEmpty())"/>
+                </div>
+            </listfooter>
+        </listfoot>	
+    </listbox>
+</window>

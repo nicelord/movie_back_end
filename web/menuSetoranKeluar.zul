@@ -1,0 +1,191 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<window id="mainWin" title="DAFTAR SERAH TERIMA SETORAN KELUAR" vflex="1" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuSetoranKeluarVM')">
+    <borderlayout>
+        <center>
+            <listbox id="listTtss" mold="paging" width="100%" vflex="true" autopaging="true" 
+                     checkmark="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}" 
+                     multiple="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}" 
+                     selectedItems="@bind(vm.selectedTTSS)"
+                     emptyMessage="Tidak ada data"
+                     model="@load(vm.listTTSS)">        
+                                             
+                <custom-attributes org.zkoss.zul.listbox.rod="true" 
+                                   if="${sessionScope.userCredential.getRoles()=='KASIR' || sessionScope.userCredential.getRoles()=='SUPERVISOR'}"/>
+                     
+                <auxhead if="${sessionScope.userCredential.getRoles()=='KASIR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                    <auxheader colspan="2">
+                        <button vflex="3" hflex="3" sclass="btn-success btn-xs" iconSclass="glyphicon glyphicon-file" label="CREATE NEW" onClick="@command('buatSetoranBaru')" />
+                    </auxheader>
+                    <auxheader colspan="5">
+                    </auxheader>
+                </auxhead>
+                        
+                <listhead sizable="true" visible="true" >
+                    <listheader width="30px" />
+                    <listheader sort="auto(nomor)" label="NOMOR"/>
+                    <listheader sort="auto(nilai)" label="NILAI" width="140px" />
+                    <listheader sort="auto(namaPenyetor)" label="PENERIMA"/>
+                    <listheader sort="tag" label="TAG"/>
+                    <listheader sort="auto(jenisKas)" label="JENIS KAS"/>
+                    <listheader sort="auto(wktTerima)" label="WKT TERIMA"/>
+                </listhead>
+                        
+                <auxhead>
+                    <auxheader>
+                        <image id="" src="img/filter.png" width=""  height=""/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNomor)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNilai)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterPenyetor)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterTag)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <button popup="popupJenisKas" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                          
+                        <popup id="popupJenisKas" width="250px" style="word-wrap">
+                            <vlayout>
+                                <div class="btn-group" hflex="3">
+                                    <button label="ALL" onClick="@command('resetFilterKas')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="TRANSFER" onClick="@command('filterKasTransfer')" sclass="btn-default btn-xs" hflex="3" />
+                                    <button label="DROPPING" onClick="@command('filterKasDropping')" sclass="btn-default btn-xs" hflex="3" />
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+                    <auxheader>
+                        <button popup="popupTimeChooser" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                          
+                        <popup id="popupTimeChooser" width="200px" style="word-wrap">
+                            <vlayout>
+                                <label value="Dari :" />
+                                <datebox id="startDate" value="@bind(vm.tsAwal)" format="yyyy-MM-dd HH:mm" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <label value="Sampai :" />
+                                <datebox id="endDate" value="@bind(vm.tsAkhir)" format="yyyy-MM-dd HH:mm" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <div class="btn-group" hflex="3">
+                                    <button label="TAMPILKAN" onClick="@command('saringTgl')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="RESET" onClick="@command('resetSaringWkt')" sclass="btn-default btn-xs" hflex="3" >
+                                        <attribute name="onClick">
+                                            startDate.setText("");
+                                            endDate.setText("");
+                                        </attribute>
+                                    </button>
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+                </auxhead>
+                    
+                <template name="model" var="s">
+                    <listitem sclass="mainList" onClick="@command('showDetail', TTSS=s)">
+                        <listcell />
+                        <listcell label="@load(s.nomor)"/>
+                        <listcell label="@load(vm.format(s.nilai))"/>
+                        <listcell label="@load(s.namaPenyetor.toUpperCase())" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                        <listcell label="@load(s.tag)"/>
+                        <listcell label="@load(s.jenisKas)"/>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(s.wktTerima) @converter('formatedDate', format='yyyy-MM-dd hh:mm')"/>
+                        </listcell>
+                    </listitem>
+                </template>
+                    
+                <listfoot>
+                    <listfooter span="6" valign="middle">
+                        <div style="float:left;">
+                            
+                            <button onClick="@command('downloadXLS')" iconSclass="glyphicon glyphicon-download-alt" label="DOWNLOAD TO EXCEL" 
+                                    if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                            </button>
+                        </div>
+                        <div style="float:right;">
+                            <label value="TOTAL NILAI "/>
+                            <label value="@load(vm.format(vm.totalNilai))"/>
+                            <label value=" "/>
+                        </div>
+                    </listfooter>
+                </listfoot>		
+            </listbox>
+                
+        </center>
+        <east title="DETAIL" size="35%" splittable="true" collapsible="true">
+            <div vflex="3" hflex="3">
+                <vbox align="center" hflex="3" vflex="3">
+                    <grid hflex="3" vflex="3">
+                        <columns>
+                            <column align="left" width="25%"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                          
+                                    
+                            <row>
+                                NOMOR
+                                <label value="@load(vm.ttss.nomor)"/>
+                            </row>
+                            <row>
+                                NILAI
+                                <label value="@load(vm.format(vm.ttss.nilai).toUpperCase())"/>
+                            </row> 
+                            <row>
+                                TERBILANG
+                                <label value="@load(vm.terbilang(vm.ttss.nilai))"/>
+                            </row> 
+                                    
+                            <row>
+                                PENERIMA
+                                <label value="@load(vm.ttss.namaPenyetor.toUpperCase())"/>
+                            </row>
+                            <row>
+                                TAG
+                                <label value="@load(vm.ttss.tag.toUpperCase())"/>
+                            </row>
+                            <row>
+                                PENYETOR    
+                                <label value="@load(vm.ttss.userLogin.nama.toUpperCase())"/>
+                            </row> 
+                            <row>
+                                WKT TERIMA
+                                <label value="@load(vm.ttss.wktTerima)"/>
+                            </row>
+                            <row>
+                                JENIS KAS
+                                <label value="@load(vm.ttss.jenisKas)"/>
+                            </row>
+                            <row>
+                                KETERANGAN
+                                <textbox multiline="true" rows="5" hflex="3" value="@load(vm.ttss.keterangan)" readonly="true">
+                                                   
+                                </textbox>
+                            </row> 
+                            <row>
+                                CETAKKAN KE
+                                <label value="@load(vm.ttss.itungCetakan())"/>
+                            </row> 
+                        </rows>
+                        <foot>
+                            <footer span="2">
+                                <hlayout>
+                                    <button onClick="@command('liatRevisi')" hflex="3" sclass="btn-default" iconSclass="glyphicon glyphicon-th-list" label="DAFTAR CETAKAN" 
+                                            if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}"/>
+                                    <button onClick="@command('cetakUlang')" hflex="3" sclass="btn-danger" iconSclass="glyphicon glyphicon-print" label="CETAK ULANG" 
+                                            if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}"/>
+                                </hlayout>
+                            </footer>
+                        </foot>
+                    </grid>
+                </vbox>
+                      
+            </div>
+        </east>
+    </borderlayout>
+</window>

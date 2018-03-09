@@ -1,0 +1,118 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>
+    
+    <style>
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+        
+    </style>
+    
+    
+
+    <window id="mainWin" title="DAILY REPORT" vflex="3" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuBalanceDailyVM')">
+        <borderlayout>
+            <center>
+               
+                <listbox id="listBalanceDaily" width="100%" vflex="true" 
+                         emptyMessage="Tidak ada data"
+                         model="@load(vm.listBalanceDaily)">                   
+                                             
+                    <custom-attributes org.zkoss.zul.listbox.rod="true" 
+                                       if="${sessionScope.userCredential.getRoles()=='KASIR' || sessionScope.userCredential.getRoles()=='SUPERVISOR'}"/>
+                     
+                    <auxhead>
+                        <auxheader colspan="6">
+                            <label value="Dari :" />
+                            <datebox id="startDate" format="yyyy-MM-dd" value="@bind(vm.startDate)" constraint="no future: now or never" readonly="true" hflex="3"/>
+                            <label value="Sampai :" />
+                            <datebox id="endDate" format="yyyy-MM-dd" value="@bind(vm.endDate)" constraint="no future: now or never" readonly="true" hflex="3"/>
+                            
+                        </auxheader>
+                        <auxheader colspan="4">
+                            <div class="btn-group" hflex="3">
+                                <button onClick="@command('refreshDailyReport')" iconSclass="glyphicon glyphicon-filter" label="GENERATE REPORT" sclass="btn-info"/>
+                                <button onClick="@command('resetDailyReport')" iconSclass="glyphicon glyphicon-refresh" label="RESET"/>
+                            </div>
+                        </auxheader>
+                    </auxhead>
+                    
+                    <auxhead>
+                        <auxheader />
+                        <auxheader colspan="5" label="Rekapan Setoran Ke Kasir (Penerimaan Kasir)"/>
+                        <auxheader colspan="4" label="Pengeluaran Kasir (Secara Fisik)"/>
+                    </auxhead>
+                    
+                    <listhead sizable="true" visible="true" >
+
+                        <listheader label="TANGGAL" width="120px" />
+                        <listheader label="COLLECTOR" sort="auto(totalCollector)" />
+                        <listheader label="SALESMAN" sort="auto(totalSalesman)" />
+                        <listheader label="EXPEDISI" sort="auto(totalExpedisi)" />
+                        <listheader label="LAIN-LAIN" sort="auto(totalLainnya)" />
+                        <listheader label="TOTAL" sort="auto(totalHarianIn)" />
+                        <listheader label="BANK/PICKUP"  sort="auto(totalBank)" />
+                        <listheader label="CN OUTLET" sort="auto(totalCNOutlet)" />
+                        <listheader label="LAIN-LAIN" sort="auto(totalLainnyaOut)" />
+                        <listheader label="TOTAL" sort="auto(totalHarianOut)" />
+                        
+                    </listhead>
+                    
+                    <template name="model" var="s">
+                        <listitem sclass="mainList">
+                            <listcell label="@load(s.tanggal)"/>
+                            <listcell label="@load(vm.format(s.totalCollector))"/>
+                            <listcell label="@load(vm.format(s.totalSalesman))"/>
+                            <listcell label="@load(vm.format(s.totalExpedisi))"/>
+                            <listcell label="@load(vm.format(s.totalLainnya))"/>
+                            <listcell label="@load(vm.format(s.getTotalHarianIn()))" style="font-weight: bold;"/>
+                            <listcell label="@load(vm.format(s.totalBank))"/>
+                            <listcell label="@load(vm.format(s.totalCNOutlet))"/>
+                            <listcell label="@load(vm.format(s.totalLainnyaOut))"/>
+                            <listcell label="@load(vm.format(s.getTotalHarianOut()))" style="font-weight: bold;"/>
+                        </listitem>
+                    </template>	
+                    
+                    <listfoot>
+                     
+                        <listfooter>
+                         
+                            <button sclass="btn-success" onClick="@command('downloadXLS')" iconSclass="glyphicon glyphicon-download-alt" label="DOWNLOAD" 
+                                        if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                            </button>
+                      
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListCollector))" style="color:blue"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListSalesman))" style="color:blue"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListExpedisi))" style="color:blue"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListLainnyaIn))" style="color:blue"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListAllIn))" style="font-weight:bold;color:blue"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListBank))" style="color:red"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListCn))" style="color:red"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListLainnyaOut))" style="color:red"/>
+                        </listfooter>
+                        <listfooter>
+                            <label value="@load(vm.format(vm.totalListAllOut))" style="font-weight:bold;color:red"/>
+                        </listfooter>
+                    </listfoot>
+          
+                </listbox>
+            </center>
+        </borderlayout>
+    </window>
+</zk>

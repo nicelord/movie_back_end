@@ -1,0 +1,104 @@
+ 
+<window 
+    apply="org.zkoss.bind.BindComposer"
+    viewModel="@id('vm') @init('com.enseval.ttss.scrapper.ScrapperVM')" 
+    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;"
+    position="center,middle"
+    title="@load('SCRAPE NEW LINK - '.concat(vm.movie.title))"
+    border="normal" 
+    closable="false">
+    
+    <textbox 
+        value="@bind(vm.url)"
+        style="width:100%" multiline="true" rows="10">
+    </textbox>
+    <separator bar="true"/>
+    <listbox id="listMovies" width="900px" height="400px" autopaging="true" 
+             model="@load(vm.scrapedResult)"   
+             selectedItems="@bind(vm.selectedResults)"    
+             checkmark="true" 
+             multiple="true" 
+             emptyMessage="no data">    
+        <custom-attributes org.zkoss.zul.nativebar="true"/>  
+        
+        <auxhead>
+            <auxheader colspan="6">
+                RESULT
+            </auxheader>
+            <auxheader colspan="1">
+                <button hflex="3" sclass="btn-warning" onClick="@command('searchMoviePage')">Search gostream</button>
+            </auxheader>
+            <auxheader colspan="1">
+                <button hflex="3" sclass="btn-warning" onClick="@command('scrape')" disabled="@bind(vm.url eq null or vm.url eq '')">SCRAPE!</button>
+            </auxheader>
+        </auxhead>  
+          
+        <listhead sizable="true" visible="true" >
+            <listheader width="30px" />
+            <listheader sort="link" label="Url"/>
+            <listheader label="Quality" width="100px"/>
+            <listheader label="Resolution" width="100px"/>
+            <listheader sort="iframe" label="iframe" width="30px"/>
+            <listheader label="Server" />
+            <listheader label="Scraped link" />
+            <listheader label="Actions" />
+        </listhead> 
+        <template name="model" var="s">
+            <listitem sclass="mainList">
+                <listcell />
+                <listcell>
+                    <textbox value="@load(s.url)" hflex="3"/>
+                </listcell>
+                <listcell>
+                    <combobox 
+                        model="@load(vm.listQuality)"
+                        selectedItem="@bind(s.quality)"
+                        width="100%">
+                        <template name="model" var="q">
+                            <comboitem label="@load(q.quality)" />
+                        </template>
+                                                
+                    </combobox>
+                </listcell>
+                <listcell>
+                    <combobox 
+                        model="@load(vm.listResolution)"
+                        selectedItem="@bind(s.resolution)"
+                        width="100%">
+                        <template name="model" var="q">
+                            <comboitem label="@load(q.resolution)" />
+                        </template>
+                                                
+                    </combobox>
+                </listcell>
+                <listcell>
+                    <checkbox checked="@bind(s.iframe)" />
+                </listcell>
+                <listcell label="@load(s.server)"/>
+                <listcell>
+                    <textbox value="@load(s.scrapedLink)" hflex="3"/>
+                </listcell>
+                <listcell>
+                    <hlayout>
+                        <button onClick="@command('addSelectedItemTask', url=s)">ADD TASK</button>
+                    </hlayout>
+                </listcell>
+            </listitem>
+        </template>
+        
+        <listfoot>
+            <listfooter valign="middle" span="5">
+                <hlayout>
+                   
+                </hlayout>
+            </listfooter>
+            <listfooter valign="middle" span="3">
+                <div style="float:right;">
+                    <button onClick="@command('removeDuplicate')" sclass="btn-danger" iconSclass="glyphicon glyphicon-remove" label="REMOVE DUPLICATE" disabled="@bind(vm.scrapedResult.isEmpty())"/>
+                    <button onClick="@command('addSelectedItemsTask')"  sclass="btn-success" label="ADD TASK" disabled="@bind(vm.selectedResults.isEmpty())"/>
+                </div>
+            </listfooter>
+        </listfoot>	
+    </listbox>
+    
+</window>

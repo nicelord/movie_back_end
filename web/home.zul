@@ -1,0 +1,11 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<?link rel="stylesheet" type="text/css" href="css/style.css"?>
+<?init class="org.zkoss.zk.ui.util.Composition" arg0="template.zul"?>
+<zk>
+    <div self="@define(content)" apply="org.zkoss.bind.BindComposer" viewModel="@id('e') @init('com.enseval.ttss.vm.ContentVM')">
+     
+        <include id="mainInclude" mode="defer" src="@load(e.thePage)" progressing="@load(e.thePage eq '/movies.zul' ? 'true' : 'false')"/>
+    
+    </div>
+</zk>

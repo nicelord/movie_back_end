@@ -1,0 +1,166 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<window id="mainWin" title="LINK PROCESSOR" vflex="3" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.LinkProcessorVM')">
+    <borderlayout>
+        <center>
+            <listbox id="listMovies" mold="paging" width="100%" vflex="true" autopaging="true" 
+                     checkmark="false" 
+                     multiple="true" 
+                     selectedItems="@bind(vm.selectedLinks)"
+                     selectedItem="@bind(vm.selectedLink)"
+                     emptyMessage="no data"
+                     model="@load(vm.links)">        
+                                             
+                <custom-attributes org.zkoss.zul.listbox.rod="true" scope="page"/>
+                <custom-attributes org.zkoss.zul.listbox.initRodSize="30"/>
+                     
+                <auxhead>
+                    <auxheader colspan="2">
+                        <button vflex="3" hflex="3" sclass="btn-success btn-xs" iconSclass="glyphicon glyphicon-file" label="ADD NEW LINK" onClick="@command('addNewLink')" />
+                    </auxheader>
+                    <auxheader colspan="6">
+                    
+                    </auxheader>
+                </auxhead>
+                        
+                <listhead sizable="true" visible="true" >
+                    <listheader sort="auto(id)" label="ID" width="50px" />
+                    <listheader sort="auto(url)" label="URL" width="200px" />
+                    <listheader sort="auto(movieId)" label="MOVIE ID" width="50px" />
+                    <listheader sort="auto(downloaded)" label="DL" width="50px" />
+                    <listheader sort="auto(quality)" label="QLTY" width="100px" />
+                    <listheader sort="auto(resolution)" label="RES" width="90px" />
+                    <listheader sort="auto(addedDate)" label="ADDED" width="100px" />
+                    <listheader label="x"/>
+                </listhead>
+                        
+                
+                    
+                <template name="model" var="s">
+                    <listitem sclass="mainList">
+                        <listcell label="@load(s.id)"/>
+                        <listcell>
+                            <textbox hflex="3" value="@load(s.url)"/>
+                        </listcell>
+                        <listcell label="@load(s.movieId)"/>
+                        <listcell label="@load(s.downloaded)"/>
+                        <listcell>
+                            <combobox 
+                                model="@load(vm.listQuality)"
+                                selectedItem="@bind(s.quality)"
+                                width="100%">
+                                <template name="model" var="q">
+                                    <comboitem label="@load(q.quality)" />
+                                </template>     
+                            </combobox>
+                        </listcell>
+                        <listcell>
+                            <combobox 
+                                model="@load(vm.listResolution)"
+                                selectedItem="@bind(s.resolution)"
+                                width="100%">
+                                <template name="model" var="q">
+                                    <comboitem label="@load(q.resolution)" />
+                                </template>
+                                                
+                            </combobox>
+                        </listcell>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(s.addedDate) @converter('formatedDate', format='yyyy-MM-dd hh:mm')"/>
+                        </listcell>
+                        <listcell>
+                            <button 
+                                onClick="@command('saveLinkData', lp=s)"
+                                iconSclass="glyphicon glyphicon-floppy-disk" 
+                                sclass="btn-xs btn-success"/>
+                            <button 
+                                onClick="@command('deleteLink', lp=s)"
+                                iconSclass="glyphicon glyphicon-remove" 
+                                sclass="btn-xs btn-danger"/>
+                        </listcell>
+                    </listitem>
+                </template>
+                    
+                <listfoot>
+                    <listfooter span="13" valign="middle">
+                        <button onClick="@command('deleteSelectedLinks')" 
+                                disabled="@bind(vm.selectedLinks.isEmpty())"
+                                sclass="btn-danger" iconSclass="glyphicon glyphicon-remove" label="DELETE">
+                        </button>
+                    </listfooter>
+                </listfoot>		
+            </listbox>
+                
+        </center>
+        <east title="TASK RESULT" size="45%" splittable="true" collapsible="true">
+            <listbox mold="paging" width="100%" vflex="true" autopaging="true" 
+                     checkmark="true" 
+                     multiple="true" 
+                     emptyMessage="no data"> 
+                      
+                <listhead sizable="true" visible="true" >
+                    <listheader width="30px" />
+                    <listheader label="TASK"/>
+                    <listheader label="PROGRESS"/>
+                    <listheader label="LASTCHECK"/>
+                    <listheader label="RESULT"/>
+                    <listheader label="ACTION"/>
+                </listhead>
+                
+                <listitem sclass="mainList" disabled="@load(!vm.selectedLink.streamangoTask.isEnabled)">
+                    <listcell />
+                    <listcell label="STREAMANGO"/>
+                    <listcell label="@load(vm.selectedLink.streamangoTask.currentState)"/>
+                    <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                        <label value="@load(vm.selectedLink.streamangoTask.lastrun) @converter('formatedDate', format='yyyy-MM-dd hh:mm')"/>
+                    </listcell>
+                    <listcell>
+                        <textbox hflex="3" value="@load(vm.selectedLink.streamangoTask.taskResult)" disabled="@load(!vm.selectedLink.streamangoTask.isEnabled)"/>
+                    </listcell>
+                    <listcell>
+                        <button 
+                            disabled="@load(vm.selectedLink.streamangoTask.taskResult eq 'error' || vm.selectedLink.streamangoTask.taskResult eq '')" 
+                            onClick="@command('addToMovie',lp=vm.selectedLink,task='streamango')"
+                            sclass="btn-xs btn-success">ADD TO MOVIE</button>
+                    </listcell>
+                </listitem>
+                <listitem sclass="mainList" disabled="@load(!vm.selectedLink.openloadTask.isEnabled)">
+                    <listcell />
+                    <listcell label="OPENLOAD"/>
+                    <listcell label="@load(vm.selectedLink.openloadTask.currentState)"/>
+                    <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                        <label value="@load(vm.selectedLink.openloadTask.lastrun) @converter('formatedDate', format='yyyy-MM-dd hh:mm')"/>
+                    </listcell>
+                    <listcell>
+                        <textbox hflex="3" value="@load(vm.selectedLink.openloadTask.taskResult)" disabled="@load(!vm.selectedLink.openloadTask.isEnabled)"/>
+                    </listcell>
+                    <listcell>
+                        <button disabled="@load(vm.selectedLink.openloadTask.taskResult eq 'error' || vm.selectedLink.openloadTask.taskResult eq '')" 
+                                onClick="@command('addToMovie',lp=vm.selectedLink,task='openload')"
+                                sclass="btn-xs btn-success">ADD TO MOVIE</button>
+                    </listcell>
+                </listitem>
+                <listitem sclass="mainList" disabled="@load(!vm.selectedLink.gphotosTask.isEnabled)">
+                    <listcell />
+                    <listcell label="GPHOTOS"/>
+                    <listcell label="@load(vm.selectedLink.gphotosTask.currentState)"/>
+                    <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                        <label value="@load(vm.selectedLink.gphotosTask.lastrun) @converter('formatedDate', format='yyyy-MM-dd hh:mm')"/>
+                    </listcell>
+                    <listcell>
+                        <textbox hflex="3" value="@load(vm.selectedLink.gphotosTask.taskResult)" disabled="@load(!vm.selectedLink.gphotosTask.isEnabled)"/>
+                    </listcell>
+                    <listcell>
+                        <button 
+                            disabled="@load(vm.selectedLink.gphotosTask.taskResult eq 'error' || vm.selectedLink.gphotosTask.taskResult eq '')" 
+                            onClick="@command('addToMovie',lp=vm.selectedLink,task='openload')"
+                            sclass="btn-xs btn-success">ADD TO MOVIE</button>
+                    </listcell>
+                </listitem>
+                
+
+            </listbox>
+            
+        </east>
+    </borderlayout>
+</window>

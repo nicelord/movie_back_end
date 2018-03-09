@@ -1,0 +1,102 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>
+    
+    <style>
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+        
+    </style>
+    
+    
+
+    <window id="mainWin" title="SALDO" vflex="3" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuBalanceVM1Backup')">
+        <borderlayout>
+            <center>
+               
+                <listbox id="listTtss" mold="paging" width="100%" vflex="true" autopaging="true" 
+                         selectedItems="@bind(vm.selectedTTSS)"
+                         emptyMessage="Tidak ada data"
+                         model="@load(vm.listTTSS)">   
+                    <zscript>   <![CDATA[
+                        listTtss.pagingChild.mold = "os";
+                            ]]>   
+                    </zscript>  
+                
+                                             
+                    <custom-attributes org.zkoss.zul.listbox.rod="true" 
+                                       if="${sessionScope.userCredential.getRoles()=='KASIR' || sessionScope.userCredential.getRoles()=='SUPERVISOR'}"/>
+                     
+                    <auxhead>
+                        <auxheader colspan="5">
+                            Jenis Kas : 
+                            <combobox id="filterJenis" hflex="3" readonly="true" value="@bind(vm.filterJenisKas)">
+                                <comboitem label="SEMUA"/>
+                                <comboitem label="KAS TRANSFER"/>
+                                <comboitem label="KAS DROPPING"/>
+                            </combobox>
+                            Waktu Cutoff : 
+                            <datebox id="filterCutoff" format="dd/MMMM/yyyy" constraint="no future: now or never" readonly="true" hflex="3" style="height:30px;" value="@bind(vm.filterCutoff)" />
+                            <button onClick="@command('refresh')" iconSclass="glyphicon glyphicon-filter" label="FILTER" sclass="btn-info"/>
+                        </auxheader>
+                        <auxheader colspan="2">
+                           <!-- <button onClick="@command('showCashOpname')" iconSclass="glyphicon glyphicon-usd" label="CASH OPNAME" sclass="btn-success" hflex="true"/>-->
+                        </auxheader>
+                    </auxhead>
+                        
+                    <listhead sizable="true" visible="true" >
+
+                        <listheader sort="auto(nomor)" label="NOMOR"/>
+                        
+                        <listheader sort="auto(namaPenyetor)" label="PENYETOR/PENERIMA"/>
+                        <listheader sort="tag" label="TAG"/>
+                        <listheader sort="auto(jenisKas)" label="JENIS KAS"/>
+                        <listheader sort="auto(cutOffDate)" label="WAKTU"/>
+                        <listheader sort="auto(nilai)" label="NILAI"/>
+                        <listheader sort="auto(saldo)" label="SALDO"/>
+                    </listhead>
+                    
+                    <template name="model" var="s">
+                        <listitem sclass="mainList" onClick="@command('showDetail', TTSS=s)">
+
+                            <listcell label="@load(s.nomor)"/>
+                           
+                            <listcell label="@load(s.namaPenyetor.toUpperCase())" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                            <listcell label="@load(s.tag)"/>
+                            <listcell label="@load(s.jenisKas)"/>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <label value="@load(s.wktTerima) @converter('formatedDate', format='yyyy/MM/dd hh:mm')"/>
+                            </listcell>
+                            <listcell label="@load(vm.format(s.nilai))" if="${s.tipe=='masuk'}"/>
+                            <listcell label="@load(vm.format(-s.nilai))" if="${s.tipe=='keluar'}"/>
+                            <listcell label="@load(vm.format(s.saldo))"/>
+                        </listitem>
+                    </template>
+                    
+                    <listfoot>
+                        <listfooter span="7" valign="middle">
+                            <div style="float:left;">
+                                <button onClick="@command('downloadXLS')" iconSclass="glyphicon glyphicon-download-alt" label="DOWNLOAD TO EXCEL" 
+                                        if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                                </button>
+                                <space spacing="20px" />
+                            </div>
+                            <div style="float:right;">
+                                <label value="*Saldo awal Transfer: " style="font-style: italic"/> 
+                                <label value="@load(vm.format(vm.saldoAwal))" style="font-weight: bold;font-style: italic"/> 
+                                <space />
+                                <label value="*Saldo awal Dropping : " style="font-style: italic"/> 
+                                <label value="@load(vm.format(vm.saldoAwalDropping))" style="font-weight: bold;font-style: italic"/> 
+                                <space />
+                                <label value="*Tgl efektif : " style="font-style: italic"/> 
+                                <label value="@load(vm.tglSaldoAwal) @converter('formatedDate', format='yyyy/MM/dd')" style="font-weight: bold;font-style: italic"/>
+                            
+                            </div>
+                        </listfooter>
+                    </listfoot>		
+                </listbox>
+                
+            </center>
+        </borderlayout>
+    </window>
+</zk>

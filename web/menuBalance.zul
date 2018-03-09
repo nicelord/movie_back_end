@@ -1,0 +1,97 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>
+    
+    <style>
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+        
+    </style>
+    
+    
+
+    <window id="mainWin" title="SALDO" vflex="3" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuBalanceVM')">
+        <borderlayout>
+            <center>
+               
+                <listbox id="listBalance" mold="paging" width="100%" vflex="true" autopaging="true" 
+                         emptyMessage="Tidak ada data"
+                         model="@load(vm.listBalance)">   
+                    <zscript>   <![CDATA[
+                        listTtss.pagingChild.mold = "os";
+                            ]]>   
+                    </zscript>  
+                
+                                             
+                    <custom-attributes org.zkoss.zul.listbox.rod="true" 
+                                       if="${sessionScope.userCredential.getRoles()=='KASIR' || sessionScope.userCredential.getRoles()=='SUPERVISOR'}"/>
+                     
+                    <auxhead>
+                        <auxheader colspan="5">
+                            Jenis Kas : 
+                            <combobox id="filterJenis" hflex="3" readonly="true" value="@bind(vm.filterJenisKas)">
+                                <comboitem label="KAS TRANSFER"/>
+                                <comboitem label="KAS DROPPING"/>
+                            </combobox>
+                            Periode : 
+                            <combobox id="filterBulan" hflex="3" readonly="true" value="@bind(vm.filterBulan)" model="@load(vm.listBulan)">
+                                <template name="model" var="s">
+                                    <comboitem label="@load(s)"/>
+                                </template>
+                            </combobox>
+                            <button onClick="@command('filterDataBalance')" iconSclass="glyphicon glyphicon-filter" label="FILTER" sclass="btn-info"/>
+                            <button onClick="@command('showAllBalance')" iconSclass="glyphicon glyphicon-refresh" label="RESET" sclass="btn-warning"/>
+                        
+                        </auxheader>
+                    </auxhead>
+                        
+                    <listhead sizable="true" visible="true" >
+
+                        <listheader label="PERIODE"/>
+                        <listheader label="JENIS KAS"/>
+                        <listheader label="SALDO AWAL"/>
+                        <listheader label="MUTASI MASUK"/>
+                        <listheader label="MUTASI KELUAR"/>
+                        <listheader label="SALDO AKHIR"/>
+                        
+                    </listhead>
+                    
+                    <template name="model" var="s">
+                        <listitem sclass="mainList">
+
+                            <listcell label="@load(s.periode)"/>
+                            <listcell label="@load(s.jenisKas)"/>
+                            <listcell label="@load(vm.format(s.saldoAwal))"/>
+                            <listcell label="@load(vm.format(s.totalMasuk))"/>
+                            <listcell label="@load(vm.format(s.totalKeluar))"/>
+                            <listcell label="@load(vm.format(s.saldoAkhir))"/>
+                        </listitem>
+                    </template>
+                    
+                    <listfoot>
+                        <listfooter span="7" valign="middle">
+                            <div style="float:left;">
+                                <button onClick="@command('downloadXLS')" iconSclass="glyphicon glyphicon-download-alt" label="DOWNLOAD TO EXCEL" 
+                                        if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                                </button>
+                                <space spacing="20px" />
+                            </div>
+                            <div style="float:right;">
+                                <label value="*Saldo awal Transfer: " style="font-style: italic"/> 
+                                <label value="@load(vm.format(vm.saldoAwal))" style="font-weight: bold;font-style: italic"/> 
+                                <space />
+                                <label value="*Saldo awal Dropping : " style="font-style: italic"/> 
+                                <label value="@load(vm.format(vm.saldoAwalDropping))" style="font-weight: bold;font-style: italic"/> 
+                                <space />
+                                <label value="*Tgl efektif : " style="font-style: italic"/> 
+                                <label value="@load(vm.tglSaldoAwal) @converter('formatedDate', format='dd-MM-yyyy')" style="font-weight: bold;font-style: italic"/>
+                            
+                            </div>
+                        </listfooter>
+                    </listfoot>		
+                </listbox>
+                
+            </center>
+        </borderlayout>
+    </window>
+</zk>

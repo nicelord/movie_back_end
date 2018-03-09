@@ -1,0 +1,228 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<window id="mainWin" title="DAFTAR SERAH TERIMA KAS KECIL" vflex="3" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuKasKecilVM')">
+    <borderlayout>
+        <center>
+            <listbox mold="paging" width="100%" vflex="true" autopaging="true" 
+                     checkmark="false" 
+                     multiple="false" 
+                     selectedItems="@bind(vm.selectedKasKecil)"
+                     emptyMessage="Tidak ada data"
+                     model="@load(vm.listKasKecil)">        
+                                             
+                <custom-attributes org.zkoss.zul.listbox.rod="true" 
+                                   if="${sessionScope.userCredential.getRoles()=='KASIR_KECIL' || sessionScope.userCredential.getRoles()=='SUPERVISOR'}"/>
+                     
+                <auxhead if="${sessionScope.userCredential.getRoles()=='KASIR_KECIL' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                    <auxheader colspan="2">
+                        <button vflex="3" hflex="3" sclass="btn-success btn-xs" iconSclass="glyphicon glyphicon-file" label="BUAT BARU" onClick="@command('buatTransaksi')" />
+                    </auxheader>
+                    <auxheader colspan="6">
+                    </auxheader>
+                </auxhead>
+                        
+                <listhead sizable="true" visible="true" >
+                    <listheader width="30px" />
+                    <listheader sort="auto(nomor)" label="NOMOR"/>
+                    <listheader sort="auto(nilai)" label="NILAI" width="140px" />
+                    <listheader sort="auto(nama)" label="NAMA"/>
+                    <listheader sort="auto(dept)" label="DEPT"/>
+                    <listheader sort="auto(tanggalBuat)" label="TGL BUAT"/>
+                    <listheader sort="auto(tanggalSelesai)" label="TGL SELESAI"/>
+                    <listheader sort="auto(status)" label="STATUS"/>
+                </listhead>
+                        
+                <auxhead>
+                    <auxheader>
+                        <image id="" src="img/filter.png" width=""  height=""/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNomor)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNilai)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterNama)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterDept)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                    <auxheader>
+                        <button popup="popupTglBuatFilter" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                        <popup id="popupTglBuatFilter" width="200px" style="word-wrap">
+                            <vlayout>
+                                <label value="Dari :" />
+                                <datebox id="tglBuatDari" value="@bind(vm.tglBuatDari)" format="yyyy-MM-dd" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <label value="Sampai :" />
+                                <datebox id="tglBuatSampai" value="@bind(vm.tglBuatSampai)" format="yyyy-MM-dd" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <div class="btn-group" hflex="3">
+                                    <button label="TAMPILKAN" onClick="@command('saringTglBuat')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="RESET" onClick="@command('resetTgl')" sclass="btn-default btn-xs" hflex="3" >
+                                        <attribute name="onClick">
+                                            tglBuatDari.setText("");
+                                            tglBuatSampai.setText("");
+                                        </attribute>
+                                    </button>
+                                </div>
+                            </vlayout>
+                        </popup>
+                            
+                    </auxheader>
+                    <auxheader>
+                        <button popup="popupTglSelesaiFilter" iconSclass="glyphicon glyphicon-filter" label="FILTER" onClick="" sclass="btn-info btn-xs" hflex="3" />
+                        <popup id="popupTglSelesaiFilter" width="200px" style="word-wrap">
+                            <vlayout>
+                                <label value="Dari :" />
+                                <datebox id="tglSelesaiDari" value="@bind(vm.tglSelesaiDari)" format="yyyy-MM-dd" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <label value="Sampai :" />
+                                <datebox id="tglSelesaiSampai" value="@bind(vm.tglSelesaiSampai)" format="yyyy-MM-dd" constraint="no future: now or never" readonly="true" hflex="3"/>
+                                <div class="btn-group" hflex="3">
+                                    <button label="TAMPILKAN" onClick="@command('saringTglSelesai')" sclass="btn-info btn-xs" hflex="3" />
+                                    <button label="RESET" onClick="@command('resetTgl')" sclass="btn-default btn-xs" hflex="3" >
+                                        <attribute name="onClick">
+                                            tglSelesaiDari.setText("");
+                                            tglSelesaiSampai.setText("");
+                                        </attribute>
+                                    </button>
+                                </div>
+                            </vlayout>
+                        </popup>
+                    </auxheader>
+                    <auxheader>
+                        <textbox instant="true" value="@bind(vm.filterStatus)" hflex="3" onChange="@command('saring')"/>
+                    </auxheader>
+                </auxhead>
+                    
+                <template name="model" var="s">
+                    <listitem sclass="mainList" onClick="@command('showDetail', kasKecil=s)">
+                        <listcell />
+                        <listcell label="@load(s.nomor)"/>
+                        <listcell label="@load(vm.format(s.nilai))"/>
+                        <listcell label="@load(s.nama.toUpperCase())" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                        <listcell label="@load(s.dept)"/>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(s.tanggalBuat) @converter('formatedDate', format='yyyy-MM-dd')"/>
+                        </listcell>
+                        <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                            <label value="@load(s.tanggalSelesai) @converter('formatedDate', format='yyyy-MM-dd')"/>
+                        </listcell>
+                        <listcell>
+                            <label 
+                                value="@load(s.status)" 
+                                sclass="label label-warning" 
+                                visible="@load(s.status.equals('PENDING'))"
+                            />
+                             <label 
+                                value="@load(s.status)" 
+                                sclass="label label-success" 
+                                visible="@load(s.status.equals('SELESAI'))"
+                            />
+                        </listcell>
+                    </listitem>
+                </template>
+                    
+                <listfoot>
+                    <listfooter span="8" valign="middle">
+                        <!--div style="float:left;">
+                                
+                            <button onClick="@command('downloadXLS')" iconSclass="glyphicon glyphicon-download-alt" label="DOWNLOAD TO EXCEL" 
+                                    if="${sessionScope.userCredential.getRoles()=='SUPERVISOR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                            </button>
+                        </div-->
+                        <div style="float:right;">
+							<label value="PENDING "/>
+                            <label value="@load(vm.format(10000000-vm.saldo))" style="font-weight:bold;"/>
+                            <label value=" "/>
+							|
+                            <label value="SALDO "/>
+                            <label value="@load(vm.format(vm.saldo))" style="font-weight:bold;"/>
+                            <label value=" "/>
+                        </div>
+                    </listfooter>
+                </listfoot>		
+            </listbox>
+                
+        </center>
+        <east title="DETAIL" size="35%" splittable="true" collapsible="true">
+            <div vflex="3" hflex="3">
+                <vbox align="center" hflex="3" vflex="3">
+                    <grid hflex="3" vflex="3">
+                        <columns>
+                            <column align="left" width="25%"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                                
+                            <row>
+                                STATUS
+                                <label value="@load(vm.kasKecil.status)" />
+                             
+                            </row>                   
+                            <row>
+                                NOMOR
+                                <label value="@load(vm.kasKecil.nomor)"/>
+                            </row>
+                            <row>
+                                NILAI
+                                <label value="@load(vm.format(vm.kasKecil.nilai).toUpperCase())"/>
+                            </row> 
+                            <row>
+                                TERBILANG
+                                <label value="@load(vm.terbilang(vm.kasKecil.nilai))"/>
+                            </row> 
+                                    
+                            <row>
+                                NAMA
+                                <label value="@load(vm.kasKecil.nama.toUpperCase())"/>
+                            </row>
+                            <row>
+                                DEPT
+                                <label value="@load(vm.kasKecil.dept.toUpperCase())"/>
+                            </row>
+                            <row>
+                                KEPERLUAN
+                                <label value="@load(vm.kasKecil.keperluan.toUpperCase())"/>
+                            </row>
+                            <row>
+                                PETUGAS
+                                <label value="@load(vm.kasKecil.namaPetugas.toUpperCase())"/>
+                            </row> 
+                            <row>
+                                TGL BUAT
+                                <label value="@load(vm.kasKecil.tanggalBuat) @converter('formatedDate', format='yyyy-MM-dd')"/>
+                            </row>
+                            <row>
+                                CTT BUAT
+                                <label hflex="3" value="@load(vm.kasKecil.catatanBuat)" />
+                            </row>
+                            <row>
+                                TGL SELESAI
+                                <label value="@load(vm.kasKecil.tanggalSelesai) @converter('formatedDate', format='yyyy-MM-dd')"/>
+                            </row>
+                            <row>
+                                CTT SELESAI
+                                <label hflex="3" value="@load(vm.kasKecil.catatanSelesai)"/>
+                            </row> 
+                            
+                        </rows>
+                        <foot>
+                            <footer span="2">
+                              
+                                <button onClick="@command('tandaiSelesai')" 
+                                if="${sessionScope.userCredential.getRoles()=='KASIR_KECIL'||
+                                        sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}"
+                                        hflex="3" sclass="btn-success" 
+                                        iconSclass="glyphicon glyphicon-ok" 
+                                        label="REALISASI" 
+                                        disabled="@load(vm.kasKecil.status.equals('SELESAI'))" 
+                                />
+                            </footer>
+                        </foot>
+                    </grid>
+                </vbox>
+                      
+            </div>
+        </east>
+    </borderlayout>
+</window>

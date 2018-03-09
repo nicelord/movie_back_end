@@ -1,0 +1,37 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <div>
+        <tabbox mold="accordion" style="border: 0; border-bottom: 1px solid #cfcfcf;">
+            <tabs>
+                <tab />
+
+            </tabs>
+            
+            <tabpanels>
+                <tabpanel style="padding: 0px; border: 0;">
+                    
+                    <listbox id="sidebar" zclass="mylist-cell">
+                        
+                        <listhead>
+                            <listheader label="" width="35px"/>
+                            <listheader label=""/>
+                        </listhead>
+             
+                        <listitem style="border-bottom: 1px dotted #cfcfcf;" 
+                                  onClick="@command('changePage', page='movies.zul')">
+                            <listcell iconSclass="glyphicon glyphicon-user" />
+                            <listcell label="MOVIES"/>
+                        </listitem>
+                        <listitem style="border-bottom: 1px dotted #cfcfcf;" 
+                                  onClick="@command('changePage', page='link_processor.zul')">
+                            <listcell iconSclass="glyphicon glyphicon-user" />
+                            <listcell label="LINK PROCESSOR"/>
+                        </listitem>
+                            
+                    </listbox>                    
+                </tabpanel>
+            </tabpanels>
+        </tabbox>
+    </div>
+</zk>

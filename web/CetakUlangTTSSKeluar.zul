@@ -1,0 +1,97 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="addTTSS"  style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" mode="modal" width="500px" vflex="1" title="CETAK ULANG SETORAN" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.CetakUlangTTSSVM')" closable="true">
+                <vbox align="center">
+                    <grid>
+                        <columns>
+                            <column align="right" width="30%"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                         <row>
+                                Jenis Kas
+                                <groupbox id="gb" width="100%">
+                                    <radiogroup selectedItem="@bind(vm.ttss.jenisKas)">
+                                        <radio label="KAS TRANSFER" value="KAS TRANSFER"/>
+                                        <radio label="KAS DROPPING" value="KAS DROPPING"/>
+                                    </radiogroup>
+                                </groupbox>
+                            </row> 
+                            <row>
+                                Nilai
+                                <div class="input-group" hflex="3" width="100%">
+                                    <span class="input-group-addon">Rp.</span>
+                                    <intbox id="nilai" class="form-control input-primary" value="@bind(vm.ttss.nilai)" maxlength="20" format=",###.#" constraint="no empty,no negative" />
+                                    <span class="input-group-addon">,00</span>
+                                </div>
+
+                            </row> 
+                            <row>
+                                Nama Penerima
+                                <combobox id="penyetor"  model="@load(vm.listPenyetor)" autodrop="true" buttonVisible="false" value="@bind(vm.ttss.namaPenyetor)" hflex="3" vflex="3" width="100%" constraint="no empty,/^[a-zA-Z ]*$/">
+                                    <template name="model">
+                                        <comboitem label="@load(each.nama.toUpperCase())" />
+                                    </template>
+                                </combobox>
+                            </row>
+                            <row>
+                                TAG
+                                <groupbox id="tag" width="100%">
+                                    <radiogroup selectedItem="@bind(vm.ttss.tag)">
+                                        <radio label="BANK/PICKUP" value="BANK/PICKUP"/>
+                                        <radio label="CN OUTLET" value="CN OUTLET"/>
+                                        <radio label="LAIN-LAIN" value="LAIN-LAIN"/>
+                                    </radiogroup>
+                                </groupbox>
+                            </row> 
+                             
+                            <row>
+                                Nama Penyetor
+                                <textbox id="penerima" hflex="3" value="@load(vm.ttss.userLogin.nama)" sclass="form-control input-primary" readonly="true"/> 
+                            </row> 
+                            <row>
+                                Keterangan
+                                <textbox multiline="true" rows="5" hflex="3" value="@bind(vm.ttss.keterangan)" sclass="form-control input-primary">
+                                                   
+                                </textbox>
+                            </row> 
+                        </rows>
+                        <foot>
+                            <footer span="2" align="left">
+                                
+                                Printer : 
+                                    <combobox id="printer"  model="@load(vm.printers)" value="@load(vm.userLogin.defPrinter.namaPrinter) @save(vm.printernya)" hflex="3" vflex="3" readonly="true" constraint="no empty">
+                                        <template name="model">
+                                            <comboitem label="@load(each.namaPrinter)" />
+                                        </template>
+                                    </combobox>
+                                <div class="btn-group" style="float:right;">
+                                    <button onClick="@command('cetakKeluar')" sclass="btn-danger" iconSclass="glyphicon glyphicon-print" label="CETAK">
+                                        <attribute name="onClick">
+                                            nilai.getValue();
+                                            penyetor.getValue();
+                                        </attribute>
+                                    </button>
+                                    <button onClick="addTTSS.detach()">BATAL</button>
+                                </div>
+                            </footer>
+                        </foot>
+                    </grid>
+                </vbox>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

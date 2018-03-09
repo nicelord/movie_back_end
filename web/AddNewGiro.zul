@@ -1,0 +1,163 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+         .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="addGiro"  style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" mode="modal" width="500px" vflex="1" title="BUAT GIRO BARU" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.AddNewGiro')" closable="true">
+                <vbox align="center">
+                    <grid>
+                        <columns>
+                            <column align="right" width="30%"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                Nomor Giro
+                                <textbox id="nomorGiro" hflex="3" value="@bind(vm.giro.nomorGiro)" sclass="form-control input-primary" maxlength="80"/>
+                            </row>
+                            <row>
+                                Nama Bank
+                                <combobox id="banks"  model="@load(vm.listBank)" autodrop="true" buttonVisible="false" value="@bind(vm.giro.bank)" width="100%" constraint="no empty,/^[a-zA-Z ]*$/">
+                                    <template name="model">
+                                        <comboitem label="@load(each.bank.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row> 
+                            <row>
+                                Nilai
+                                <div class="input-group" hflex="3" width="100%">
+                                    <span class="input-group-addon">Rp.</span>
+                                    <longbox id="nilai" class="form-control input-primary" value="@bind(vm.giro.nilai)" maxlength="20" format=",###.#" constraint="no empty,no negative" />
+                                    <span class="input-group-addon">,00</span>
+                                </div>
+
+                            </row> 
+                            <row>
+                                Tgl Jatuh Tempo
+                                <datebox id="jttmp" cols="12" 
+                                         format="yyyy/MM/dd" 
+                                         onCreate="self.value = new Date()" 
+                                         readonly="true"
+                                         style="height:30px;"
+                                         value="@bind(vm.giro.tglJtTempo)"/>
+
+                            </row> 
+                            <row>
+                                Nama Penyetor
+                                <hlayout>
+                                    <combobox id="penyetor"  model="@load(vm.listPenyetor)" autodrop="true" buttonVisible="false" value="@bind(vm.giro.namaPenyetor)" width="100%" constraint="no empty,/^[a-zA-Z ]*$/">
+                                    <template name="model">
+                                        <comboitem label="@load(each.nama.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                                TAG
+                                <combobox id="tag"  model="@load(vm.listTag)" autodrop="true" buttonVisible="false" value="@bind(vm.giro.tag)" width="80%">
+                                    <template name="model">
+                                        <comboitem label="@load(each.tag.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                                </hlayout>  
+                                
+                            </row> 
+                             <row>
+                                Kota
+                                <combobox id="kota"  model="@load(vm.listKota)" autodrop="true" buttonVisible="false" value="@bind(vm.giro.kota)" width="100%">
+                                    <template name="model">
+                                        <comboitem label="@load(each.kota.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row> 
+                            <!--row>
+                                TAG
+                                <combobox id="tag"  model="@load(vm.listTag)" autodrop="true" buttonVisible="false" value="@bind(vm.giro.tag)" width="100%">
+                                    <template name="model">
+                                        <comboitem label="@load(each.tag.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row--> 
+                            <row>
+                                DK/LK/PB
+                                <groupbox id="dklk" width="100%">
+                                    <radiogroup selectedItem="@bind(vm.giro.DKLK)">
+                                        <radio label="DK" value="DK"/>
+                                        <radio label="LK" value="LK"/>
+                                        <radio label="PB" value="PB"/>
+                                    </radiogroup>
+                                </groupbox>
+                            </row>  
+                            <!--row>
+                                Status
+                            
+                                <combobox id="status" value="@bind(vm.giro.status)" constraint="no empty" readonly="true" width="100%" style="padding-right: 25px">
+                                    
+                                    <comboitem label="OK" width="100%"/>
+                                    <comboitem label="LAMPIRAN KURANG" width="100%"/>
+                                    <comboitem label="DITOLAK BANK" width="100%" visible="@load(not empty vm.giro.tglKliring)" />
+                                </combobox>
+                            
+                            </row-->
+                            <row>
+                                Customer
+                                <hlayout>
+                                    <longbox id="txtCustID" sclass="form-control input-primary" width="90px" placeholder="Cust ID" readonly="true"/>
+                                    <textbox id="txtCustName" sclass="form-control input-primary" hflex="3" placeholder="Nama Customer" readonly="true"/>
+                                    <button id="btnCustID" iconSclass="glyphicon glyphicon-search" sclass="btn-primary"  width="50px" onClick="@command('showCustomer')"/>
+                                </hlayout>  
+                            </row> 
+                            <row>
+                                Keterangan
+                                <textbox hflex="3" value="@bind(vm.giro.keterangan)" sclass="form-control input-primary">
+                                                   
+                                </textbox>
+                            </row> 
+                        </rows>
+                        <foot>
+                            <footer span="2" align="left">
+                                <!--                                <div style="float:left;">
+                                    <button onClick="@command('cetak')" sclass="btn-danger" iconSclass="glyphicon glyphicon-print" label="CETAK DAN SIMPAN">
+                                        <attribute name="onClick">
+                                            nomor.getValue();
+                                            nilai.getValue();
+                                            penyerah.getValue();
+                                        </attribute>
+                                    </button>
+                                </div>-->
+                                
+                               
+                                <div class="btn-group" style="float:right;">
+                                    <button onClick="@command('saveNewGiro')" label="SIMPAN">
+                                        <attribute name="onClick">
+                                            nomorGiro.getValue();
+                                            banks.getValue();
+                                            nilai.getValue();
+                                            jttmp.getValue();
+                                            penyetor.getValue();
+                                            kota.getValue();
+                                            
+                                        </attribute>
+                                    </button>
+                                    
+                                    <button onClick="addGiro.detach()">BATAL</button>
+                                </div>
+                            </footer>
+                        </foot>
+                    </grid>
+                </vbox>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

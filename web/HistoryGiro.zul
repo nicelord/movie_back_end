@@ -1,0 +1,62 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="ASD"  
+                    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+                    mode="modal" 
+                    width="90%" vflex="1" 
+                    title="LIST REVISI DAN PROGRESS GIRO" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.HistoryGiroVM')" closable="true">
+                <grid model="@bind(vm.listGiroHistory)" mold="paging" pageSize="10">
+                    <columns>
+                        <column label="WAKTU" width="120px"/>
+                        <column label="BANK" />
+                        <column label="NILAI" />
+                        <column label="PENYETOR" />
+                        <column label="USER" />
+                        <column label="DKLK" />
+                        <column label="TAG" />
+                        <column label="WKT TERIMA" width="120px"/>
+                        <column label="JT TEMPO" width="90px"/>
+                        <column label="TGL KLIRING" width="90px"/>
+                        <column label="DOKUMEN" width="130px"/>
+                        <column label="PROSES" />
+                        <column label="CUST ID" />
+                        <column label="KET" />
+                    </columns>
+                    <template name="model" var="c">
+                    
+                        <row>
+                            <label value="@load(c.lastUpdate) @converter('formatedDate', format='yyyy/MM/dd hh:mm')"/>
+                            <label value="@load(c.bank)" />
+                            <label value="@load(vm.format(c.nilai))"/>
+                            <label value="@load(c.namaPenyetor)" />
+                            <label value="@load(c.userLogin.nama)" />
+                            <label value="@load(c.DKLK)" />
+                            <label value="@load(c.tag)" />
+                            <label value="@load(c.wktTerima) @converter('formatedDate', format='yyyy/MM/dd hh:mm')" />
+                            <label value="@load(c.tglJtTempo) @converter('formatedDate', format='yyyy/MM/dd') " />
+                            <label value="@load(c.tglKliring) @converter('formatedDate', format='yyyy/MM/dd')" />
+                            <label value="@load(c.status)" />
+                            <label value="@load(c.prosesKliring)" />
+                            <label value="@load(c.custID)" />
+                           
+                            <label style="cursor:pointer;text-decoration: underline;"
+                                   value="info" onClick='alert(self.getAttribute("ket"))'>
+                                <custom-attributes ket="${c.keterangan}"/>
+                              
+                            </label>
+                                
+                        </row>
+                    </template>
+                </grid>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

@@ -1,0 +1,102 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="addNewKasKecil"  style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" mode="modal" width="500px" vflex="1" title="TRANSAKSI KAS KECIL BARU" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.AddNewKasKecilVM')" closable="true">
+                <vbox align="center">
+                    <grid>
+                        <columns>
+                            <column align="right" width="30%"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                Nama
+                                <combobox id="penyetor"  
+                                          model="@load(vm.listNama)" 
+                                          autodrop="true" 
+                                          buttonVisible="false" 
+                                          value="@bind(vm.kasKecil.nama)" 
+                                          width="100%" 
+                                          constraint="no empty,/^[a-zA-Z ]*$/">
+                                    
+                                    <template name="model">
+                                        <comboitem label="@load(each.nama.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row>  
+                            <row>
+                                Nilai
+                                <div class="input-group" hflex="3" width="100%">
+                                    <span class="input-group-addon">Rp.</span>
+                                    <longbox id="nilai" class="form-control input-primary" value="@bind(vm.kasKecil.nilai)" maxlength="20" format=",###.#" constraint="no empty,no negative" />
+                                    <span class="input-group-addon">,00</span>
+                                </div>
+
+                            </row> 
+                            <row>
+                                Dept.
+                                <combobox id="dept"  
+                                          model="@load(vm.listDept)" 
+                                          autodrop="true" 
+                                          buttonVisible="false" 
+                                          value="@bind(vm.kasKecil.dept)" 
+                                          width="100%" 
+                                          constraint="no empty,/^[a-zA-Z ]*$/">
+                                    
+                                    <template name="model">
+                                        <comboitem label="@load(each.dept.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row>  
+                            <row>
+                                Untuk Keperluan
+                                <textbox hflex="3" value="@bind(vm.kasKecil.keperluan)" sclass="form-control input-primary">
+                                                   
+                                </textbox>
+                            </row> 
+                            <row>
+                                Nama Petugas
+                                <textbox id="penerima" hflex="3" value="@load(vm.userLogin.nama)" sclass="form-control input-primary" readonly="true"/> 
+                            </row> 
+                            
+                            <row>
+                                Catatan Petugas
+                                <textbox hflex="3" value="@bind(vm.kasKecil.catatanBuat)" sclass="form-control input-primary">
+                                                   
+                                </textbox>
+                            </row> 
+                        </rows>
+                        <foot>
+                            <footer span="2" align="left">
+                              
+                                
+                                <div class="btn-group" style="float:right;">
+                                    <button onClick="@command('saveNewKasKecil')" sclass="btn-danger" iconSclass="glyphicon glyphicon-print" label="SUBMIT">
+                                        <attribute name="onClick">
+                                            nilai.getValue();
+                                            penyetor.getValue();
+                                        </attribute>
+                                    </button>
+                                    <button onClick="addNewKasKecil.detach()">BATAL</button>
+                                </div>
+                            </footer>
+                        </foot>
+                    </grid>
+                </vbox>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

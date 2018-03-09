@@ -1,0 +1,105 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="opname"  
+                    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+                    mode="modal" 
+                    width="80%" 
+                    vflex="1" 
+                    position="center,top"
+                    title="CASH OPNAME" 
+                    border="normal" 
+                    apply="org.zkoss.bind.BindComposer" 
+                    viewModel="@id('vm') @init('com.enseval.ttss.vm.AddNewCashOpname')" 
+                    closable="true">
+                <listbox id="box" 
+                         mold="paging"
+                         pageSize="13"
+                         width="100%" vflex="3"  
+                         emptyMessage="Tidak ada data"
+                         model="@load(vm.listOpname)"
+                >  
+                            
+                    <auxhead>
+                        <auxheader>
+                            
+                        </auxheader>
+                        <auxheader>
+                            <textbox hflex="3" value="@bind(vm.opnameBaru.tglOpname) @converter('formatedDate', format='yyyy/MM/dd HH:mm')" sclass="form-control input-primary" readonly="true"/> 
+                        </auxheader>
+                        <auxheader>
+                            <textbox hflex="3" value="@bind(vm.opnameBaru.pelaksana)" sclass="form-control input-primary" readonly="true"/> 
+                        </auxheader>
+                        <auxheader>
+                            <textbox hflex="3" value="@bind(vm.opnameBaru.jenisKas)" sclass="form-control input-primary" readonly="true"/> 
+                        </auxheader>
+                        <auxheader>
+                            <textbox hflex="3" value="@bind(vm.opnameBaru.tglCutoff) @converter('formatedDate', format='yyyy/MM/dd HH:mm')" sclass="form-control input-primary" readonly="true"/> 
+                        </auxheader>
+                        <auxheader>
+                            <div class="input-group" hflex="3" width="100%">
+                                <span class="input-group-addon">Rp.</span>
+                                <longbox class="form-control input-primary" value="@bind(vm.opnameBaru.saldoSistem)" maxlength="12" format=",###.#" constraint="no empty,no negative" readonly="true"/>
+                                <span class="input-group-addon">,00</span>
+                            </div>
+                                
+                        </auxheader>
+                        <auxheader>
+                            <div class="input-group" hflex="3" width="100%">
+                                <span class="input-group-addon">Rp.</span>
+                                <longbox class="form-control input-primary" value="@bind(vm.opnameBaru.saldoFisik)" maxlength="12" format=",###.#" constraint="no empty,no negative"/>
+                                <span class="input-group-addon">,00</span>
+                            </div>
+                        </auxheader>
+                        <auxheader>
+                            <button id="btnSubmit" class="btn-success" iconSclass="glyphicon glyphicon-plus" onClick="@command('submitOpname')" width="100%">SUBMIT</button>
+                                
+                        </auxheader>
+                    </auxhead>
+                            
+                                            
+                    <listhead>
+                        <listheader label="ID" width="35px"/>
+                        <listheader label="WAKTU OPNAME" width="130px"/>
+                        <listheader label="PELAKSANA" />
+                        <listheader label="JENIS KAS" width="110px"/>
+                        <listheader label="WAKTU CUTOFF" width="130px"/>
+                        <listheader label="SALDO SISTEM" width="200px"/>
+                        <listheader label="SALDO FISIK" width="200px"/>
+                        <listheader label="SELISIH" width="130px"/>
+                    </listhead>
+                    <template name="model" var="s">
+                        <listitem>
+                            <listcell label="@load(s.id)"/>
+                            <listcell label="@load(s.tglOpname) @converter('formatedDate', format='yyyy/MM/dd HH:mm')"/>
+                            <listcell label="@load(s.pelaksana)"/>
+                            <listcell label="@load(s.jenisKas)"/>
+                            <listcell label="@load(s.tglCutoff) @converter('formatedDate', format='yyyy/MM/dd HH:mm')"/>
+                            <listcell label="@load(vm.format(s.saldoSistem))"/>
+                            <listcell label="@load(vm.format(s.saldoFisik))"/>
+                            <listcell label="@load(vm.format(s.selisih))"/>
+                        
+                        </listitem>
+                    </template>
+                    <listfoot>
+                              
+                    </listfoot>
+                            
+                </listbox>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

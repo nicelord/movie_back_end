@@ -1,0 +1,102 @@
+ 
+<window 
+    id="addToMovie"
+    apply="org.zkoss.bind.BindComposer"
+    width="500px"
+    viewModel="@id('vm') @init('com.enseval.ttss.vm.AddNewLinkProcessorVM')" 
+    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+    vflex="1" 
+    mode="modal"
+    position="center,middle"
+    title="ADD NEW LINK TO PROCESS"
+    closable="true"
+    border="normal">
+    
+    <grid style="width:100%">
+        <custom-attributes org.zkoss.zul.nativebar="true"/> 
+        <columns>
+            <column align="left" width="100px"/>
+            <column align="left" />
+        </columns>
+        <rows>
+            <row>
+                URL : 
+                <hlayout>
+                    <textbox value="@bind(vm.linkProcessor.url)" hflex="3" sclass="form-control"/>
+                </hlayout>
+                
+            </row>
+            <row>
+                OTHER : 
+                <cell>
+                    <hlayout>
+                        <combobox 
+                            id="cmbQuality"
+                            model="@load(vm.listQuality)"
+                            selectedItem="@bind(vm.linkProcessor.quality)"
+                            width="50%">
+                            <template name="model" var="q">
+                                <comboitem label="@load(q.quality)" />
+                            </template>     
+                        </combobox>
+                        <combobox 
+                            id="cmbResolution"
+                            model="@load(vm.listResolution)"
+                            selectedItem="@bind(vm.linkProcessor.resolution)"
+                            width="50%">
+                            <template name="model" var="q">
+                                <comboitem label="@load(q.resolution)" />
+                            </template>              
+                        </combobox>
+                    </hlayout>
+                </cell>
+            </row>
+            <row>
+                TASK : 
+                <hlayout>
+                    <checkbox checked="@bind(vm.streamango)" label="streamango" sclass="input-group-addon" />
+                    <checkbox checked="@bind(vm.openload)" label="openload" sclass="input-group-addon" />
+                    <checkbox checked="@bind(vm.gphotos)" label="gphotos" sclass="input-group-addon" />
+                </hlayout>
+            </row>
+        </rows>
+    </grid>
+    
+        <separator bar="true"/>
+        
+    <listbox width="100%" vflex="true" height="400px" autopaging="true" mold="paging" pageSize="10" 
+             model="@load(vm.listMovie)"
+             selectedItem="@bind(vm.selectedMovie)"
+             checkmark="false" 
+             multiple="false" 
+             emptyMessage="no data">    
+        <custom-attributes org.zkoss.zul.nativebar="true"/>  
+        
+        <auxhead>
+            <auxheader colspan="2">
+                Filter title : <textbox instant="true" value="@bind(vm.filterTitle)" hflex="3" height="100%" onChange="@command('filterTitle')"/>
+            </auxheader>
+        </auxhead>
+
+        <listhead sizable="true" visible="true" >
+            <listheader label="TITLE"/>
+            <listheader label="LAST QUALITY" width="100px"/>
+        </listhead> 
+        
+        
+    
+        <template name="model" var="s">
+            <listitem sclass="mainList">
+                <listcell label="@load(s.title)" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                <listcell label="@load(s.streamLinks.get(0).quality.quality)"/>
+            </listitem>
+        </template>
+        <listfoot>
+            <listfooter span="2" valign="middle">
+                <button onClick="@command('saveNewLink')" disabled="@bind(vm.selectedMovie eq null)">APPLY</button>
+            </listfooter>
+        </listfoot>
+    
+    </listbox>
+    
+</window>

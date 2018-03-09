@@ -1,0 +1,59 @@
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <div self="@define(content)" vflex="3">
+        <window title="PENGATURAN PROFIL" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuUserSettingVM')">
+            <grid>
+                <columns>
+                    <column align="right" width="30%"/>
+                    <column/>
+                </columns>
+                <rows>
+                    <row>
+                        NAMA
+                        <textbox id="" hflex="3" value="@load(vm.userLogin.nama)" sclass="form-control input-primary" readonly="true" />
+                    </row>
+                    <row>
+                        USERNAME
+                        <textbox id="" hflex="3" value="@load(vm.userLogin.username)" sclass="form-control input-primary" readonly="true" />
+                    </row>
+                    <row>
+                        PASSWORD
+                        <textbox id="" type="password" hflex="3" value="@bind(vm.userLogin.password)" sclass="form-control input-primary"/>
+                    </row> 
+                    <row>
+                        DEFAULT PRINTER : 
+                        <listbox id="box" multiple="false" checkmark="true"
+                                 emptyMessage="Tidak ada data"
+                                 model="@load(vm.printers)"
+                                    selectedItem="@bind(vm.userLogin.defPrinter)">                       
+                            <listhead>
+                                <listheader width="25px"/>
+                                <listheader label="Nama Printer" />
+                                <listheader label="Keterangan" />
+                            </listhead>
+                            <template name="model" var="s">
+                                <listitem sclass="prnList">
+                                    <listcell />
+                                    <listcell label="@load(s.namaPrinter)"/>
+                                    <listcell label="@load(s.keterangan)"/>
+                                </listitem>
+                            </template>
+                        </listbox>
+                    </row> 
+                </rows>
+                <foot>
+                    <footer span="2" align="left">
+                        <div class="btn-group" style="float:right;">
+                            <button onClick="@command('simpan')" iconSclass="glyphicon glyphicon-floppy-disk" label="SIMPAN PERUBAHAN" >
+                                
+                            </button>
+                        </div>
+                    </footer>
+                </foot>
+            </grid>
+        </window>
+        
+    </div>
+    
+    
+</zk>

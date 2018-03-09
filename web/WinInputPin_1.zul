@@ -1,0 +1,86 @@
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="win_konfirm"  
+                    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+                    mode="modal" width="600px" vflex="1" 
+                    title="KONFIRMASI DAN INPUT PIN" 
+                    border="normal" 
+                    apply="org.zkoss.bind.BindComposer" 
+                    viewModel="@id('vm') @init('com.enseval.ttss.vm.WinInputPinVM')" 
+                    closable="true">
+                
+                <grid>
+                    <columns>
+                        <column width="150px"/>
+                        <column/>
+                    </columns>
+                    <rows>
+                        <row>
+                            
+                            <label value="JUMLAH TITIPAN" style="font-size:18px"/>
+                            <label value="@load(vm.formatRupiah)" style="font-size:18px"/>
+                        </row>
+                        <row>
+                            
+                            <label value="TERBILANG" style="font-size:18px"/>
+                            <label value="@load(vm.terbilang)" style="font-size:18px"/>
+                        </row>
+                        <row>
+                            <label value="KETERANGAN" style="font-size:18px"/>
+                            <label value="@load(vm.backtrap.keterangan)" style="font-size:18px"/>
+                        </row>
+                        <row>
+                            <cell colspan="2"  align="center">
+                                
+                                <separator spacing="20px" bar="true"/>
+                            </cell>
+                        </row>
+                        <row >
+                            <cell colspan="2"  align="center">
+                                
+                                <vlayout>
+                                    <label value="MASUKKAN PIN ANDA!" style="font-size:20px;"/>
+                                    <textbox type="password" value="@bind(vm.pin)" style="font-size: 20px;text-align:center" width="150px" onOK="@command('saveBacktrap')"/>
+                                    <label value="Pastikan data-data diatas sudah benar!" style="font: italic bold 12px/30px monospace;"/>
+                                </vlayout>
+                            </cell>
+                        </row>
+                    </rows>
+                    <foot>
+                        <footer span="2" align="center">
+                            <hlayout>
+                                <button label="BATAL" hflex="3" onClick="win_konfirm.detach();" sclass="btn-danger" iconSclass="glyphicon glyphicon-remove" style="font-size: 20px; float: left;">
+                  
+                                </button>
+                    
+                                <button 
+                                    hflex="3"
+                                    iconSclass="glyphicon glyphicon-ok" 
+                                    style="font-size: 20px; float: right;"
+                                    sclass="btn-success" 
+                                    onClick="@command('saveBacktrap')">KONFIRMASI</button>
+                            </hlayout>
+                        </footer>
+                    </foot>
+                </grid>
+                
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

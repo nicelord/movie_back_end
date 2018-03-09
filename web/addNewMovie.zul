@@ -1,0 +1,305 @@
+ 
+<window 
+    id="addNewMovie"
+    apply="org.zkoss.bind.BindComposer"
+    width="700px"
+    viewModel="@id('vm') @init('com.enseval.ttss.vm.AddNewMovieVM')" 
+    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+    vflex="1" 
+    mode="modal"
+    position="center,middle"
+    title="ADD NEW MOVIE"
+    closable="true"
+    border="normal">
+    
+    <grid vflex="3" hflex="3">
+        <custom-attributes org.zkoss.zul.nativebar="true"/> 
+        <columns>
+            <column align="left" width="18%"/>
+            <column align="left" />
+            <column align="left" />
+            <column align="left" />
+            <column align="left" />
+        </columns>
+        <rows>
+            <row>
+                <cell rowspan="5">
+                    <image src="@bind(vm.movie.posterLink)" width="100px"  height="148px"/>
+                </cell>
+            </row>
+            <row>
+                Title : 
+                <cell colspan="3">
+                    <hlayout>
+                        <textbox value="@bind(vm.movie.title)" vflex="3" hflex="3"/>
+                        <checkbox checked="@bind(vm.movie.publish)" label="publish" sclass="input-group-addon"/>
+                    </hlayout>
+                </cell>
+            </row>      
+            <row>
+                Release : <textbox value="@bind(vm.movie.releaseYear)" vflex="3" hflex="3"/>
+                Post date : 
+                <datebox value="@bind(vm.movie.postDate)" format="yyyy-MM-dd" readonly="true" hflex="3"/>
+            </row>  
+            <row>
+                IMDB ID/RAT : 
+                <hlayout>
+                    <textbox value="@bind(vm.movie.imdbId)" style="width:100px" vflex="3"/>
+                    <textbox value="@bind(vm.movie.rating)" style="width:30px" vflex="3"/>
+                </hlayout>
+                Last update : 
+                <datebox value="@bind(vm.movie.lastUpdate)" format="yyyy-MM-dd" readonly="true" hflex="3"/>
+            </row>    
+            <row>
+                Type : 
+                <combobox value="@bind(vm.movie.type)" hflex="3" vflex="3" readonly="true" constraint="no empty">
+                    <comboitem label="tv" value="tv" />
+                    <comboitem label="cinema" value="cinema" />
+                            
+                </combobox>
+                SE/EP :
+                <cell>
+                    <textbox value="@bind(vm.movie.season)" style="width:30px" vflex="3"/>
+                    <textbox value="@bind(vm.movie.episode)" style="width:30px" vflex="3"/>
+                </cell>
+            </row>   
+                    
+            <row>
+                <cell colspan="5">
+                    <listbox id="listStreamLinks" width="100%" vflex="true"
+                             height="200px"
+                             emptyMessage="no data"
+                             model="@load(vm.movie.streamLinks)">      
+                        <custom-attributes org.zkoss.zul.nativebar="true"/> 
+                            
+                        <listhead sizable="true" visible="true" >
+                            <listheader sort="auto(quality.quality)" label="Quality"/>
+                            <listheader sort="auto(resolution.resolution)" label="Resolution" />
+                            <listheader sort="link" label="Url" width="200px"/>
+                            <listheader sort="isIframe" label="iframe" width="30px"/>
+                            <listheader sort="auto(serverSource.serverName)" label="Server" />
+                            <listheader label="x" width="8%"/>
+                        </listhead>
+                            
+                        <template name="model" var="x">
+                            <listitem sclass="mainList">
+                                <listcell>
+                                    <combobox 
+                                        value="@save(x.newQuality)"
+                                        model="@load(vm.listQuality)"
+                                        selectedItem="@bind(x.quality)"
+                                        width="100%">
+                                        <template name="model" var="q">
+                                            <comboitem label="@load(q.quality)" />
+                                        </template>
+                                                
+                                    </combobox>
+                                </listcell>
+                                <listcell>
+                                    <combobox 
+                                        value="@save(x.newResolution)"
+                                        model="@load(vm.listResolution)"
+                                        selectedItem="@bind(x.resolution)"
+                                        width="100%">
+                                        <template name="model" var="r">
+                                            <comboitem label="@load(r.resolution)" />
+                                        </template>
+                                    </combobox>
+                                </listcell>
+                                <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                    <textbox value="@bind(x.link)" hflex="3" vflex="3"/>
+                                </listcell>
+                                <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                    <checkbox checked="@bind(x.isIframe)" />
+                                </listcell>
+                                <listcell>
+                                    <combobox 
+                                        value="@save(x.newServerSource)"
+                                        model="@load(vm.listSource)"
+                                        selectedItem="@bind(x.serverSource)"
+                                        width="100%">
+                                        <template name="model" var="s">
+                                            <comboitem label="@load(s.serverName)" />
+                                        </template>
+                                    </combobox>
+                                </listcell>
+                                <listcell>
+                                    <button sclass="btn-xs btn-danger" iconSclass="glyphicon glyphicon-remove" onClick="@command('removeLink',streamLink=x)"></button>
+                                </listcell>
+                            </listitem>
+                        </template>
+                        <listfoot>
+                            <listfooter valign="middle" span="5">
+                                <hlayout>
+                                    <button onClick="@command('addLink')" sclass="btn-xs btn-primary" iconSclass="glyphicon glyphicon-plus" label="ADD" style="width:100%" disabled="@bind(vm.movie eq null)"/>
+                                    <button onClick="@command('scrapeLink')" sclass="btn-xs btn-warning" iconSclass="glyphicon glyphicon-magnet" label="SCRAPE" style="width:100%" disabled="@bind(vm.movie eq null)"/>
+                                </hlayout>
+                            </listfooter>
+                        </listfoot>	
+                    </listbox>
+                </cell>
+            </row> 
+                                               
+            <row>
+                <cell colspan="5">
+                    <ckeditor height="100px" value="@bind(vm.movie.synopsis)" customConfigurationsPath="../../../../../js/ck_config.js"/>
+                </cell>
+            </row> 
+                    
+            <row>
+                Trailer : 
+                <cell>
+                    <textbox value="@bind(vm.movie.trailer)" width="99%"/>
+                </cell>
+                Genres : 
+                <cell colspan="2">
+                    <bandbox id="bdgenre" autodrop="true" value="@load(vm.genreListToComma(vm.movie.genres))" hflex="3">  
+                        <bandpopup hflex="min">
+                            <listbox height="250px" width="250px"
+                                     multiple="true"
+                                     checkmark="true"
+                                     selectedItems="@bind(vm.movie.genres)"
+                                     model="@load(vm.listGenre)">
+                                <listhead>
+                                    <listheader width="30px"/>
+                                    <listheader label="Genres" />
+                                    <listheader width="50px"/>
+                                </listhead>
+                                <template name="model" var="g">
+                                    <listitem sclass="mainList">
+                                        <listcell/>
+                                        <listcell label="@load(g.name)"/>
+                                        <listcell>
+                                            <button sclass="btn-xs btn-danger" iconSclass="glyphicon glyphicon-remove" onClick="@command('deleteGenre',genre=g)"></button>
+                                        </listcell>
+                                    </listitem>
+                                </template>
+                                <listfoot>
+                                    <listfooter valign="middle" span="2">
+                                        <button onClick="bdgenre.close()" sclass="btn-xs btn-default" label="OK" hflex="3"/>
+                                    </listfooter>
+                                </listfoot>	
+                            </listbox>
+                        </bandpopup>
+                    </bandbox>
+                </cell>
+            </row> 
+            <row>
+                Actors : 
+                <cell>
+                    <bandbox id="bdcast" autodrop="true" value="@load(vm.actorListToComma(vm.movie.cast))" hflex="3">  
+                        <bandpopup hflex="min">
+                            <listbox height="250px" width="200px"
+                                     multiple="true"
+                                     checkmark="true"
+                                     selectedItems="@bind(vm.movie.cast)"
+                                     model="@load(vm.listActor)">
+                                <listhead>
+                                    <listheader width="30px"/>
+                                    <listheader label="Actors" />
+                                    <listheader width="50px"/>
+                                </listhead>
+                                <template name="model" var="a">
+                                    <listitem sclass="mainList">
+                                        <listcell/>
+                                        <listcell label="@load(a.actorName)"/>
+                                        <listcell>
+                                            <button sclass="btn-xs btn-danger" iconSclass="glyphicon glyphicon-remove" onClick="@command('deleteCast',actor=a)"></button>
+                                        </listcell>
+                                    </listitem>
+                                </template>
+                                <listfoot>
+                                    <listfooter valign="middle" span="2">
+                                        <button onClick="bdcast.close()" sclass="btn-xs btn-default" label="OK" hflex="3"/>
+                                    </listfooter>
+                                </listfoot>	
+                            </listbox>
+                        </bandpopup>
+                    </bandbox>
+                </cell>
+                Countries : 
+                <cell colspan="2">
+                    <bandbox id="bdcountry" autodrop="true" value="@load(vm.countryListToComma(vm.movie.countries))" hflex="3">  
+                        <bandpopup hflex="min">
+                            <listbox height="320px" width="300px"
+                                     multiple="true"
+                                     checkmark="true"
+                                     selectedItems="@bind(vm.movie.countries)"
+                                     model="@load(vm.listCountry)">
+                                <listhead>
+                                    <listheader width="30px"/>
+                                    <listheader label="Countries" />
+                                    <listheader width="50px"/>
+                                </listhead>
+                                <template name="model" var="c">
+                                    <listitem sclass="mainList">
+                                        <listcell/>
+                                        <listcell label="@load(c.countryName)"/>
+                                        <listcell>
+                                            <button sclass="btn-xs btn-danger" iconSclass="glyphicon glyphicon-remove" onClick="@command('deleteCountry',country=c)"></button>
+                                        </listcell>
+                                    </listitem>
+                                </template>
+                                <listfoot>
+                                    <listfooter valign="middle" span="2">
+                                        <button onClick="bdcountry.close()" sclass="btn-xs btn-default" label="OK" hflex="3"/>
+                                    </listfooter>
+                                </listfoot>	
+                            </listbox>
+                        </bandpopup>
+                    </bandbox>
+                </cell>
+            </row> 
+            <row>
+                Duration : 
+                <cell>
+                    <textbox value="@bind(vm.movie.duration)" width="99%"/>
+                </cell>
+                View : 
+                <cell>
+                    <textbox value="@bind(vm.movie.views)" width="99%"/>
+                </cell>
+            </row> 
+                    
+            <row>
+                Poster : 
+                <cell colspan="4">
+                    <textbox value="@bind(vm.movie.posterLink)" width="99%"/>
+                </cell>
+            </row>  
+            <row>
+                Bigposter : 
+                <cell colspan="4">
+                    <textbox value="@bind(vm.movie.bigPosterLink)" width="99%"/>
+                </cell>
+            </row> 
+                    
+            <row>
+                Download : 
+                <cell colspan="4">
+                    <textbox value="@bind(vm.movie.downloadLink)" width="99%"/>
+                </cell>
+            </row> 
+                    
+            <row>
+                Tags : 
+                <cell colspan="4">
+                    <textbox id="tag" value="@load(vm.tagListToComma(vm.movie.tags))" width="99%"/>
+                </cell>
+            </row> 
+                            
+                            
+        </rows>
+        <foot>
+            <footer span="5">
+                <hlayout>
+                    <button onClick="@command('saveMovie')" hflex="3" sclass="btn-success" iconSclass="glyphicon glyphicon-floppy-disk" label="SAVE" disabled="@bind(vm.movie eq null)"/>
+                    <button onClick="@command('searchMovieOnline')" hflex="3" sclass="btn-primary" iconSclass="glyphicon glyphicon-search" label="SEARCH TMDB" disabled="@bind(vm.movie eq null)"/>
+                    <button onClick="@command('searchMovieInfoGoStream')" hflex="3" sclass="btn-primary" iconSclass="glyphicon glyphicon-search" label="SEARCH GOSTREAM" disabled="@bind(vm.movie eq null)"/>
+                    <button onClick="@command('searchMovieInfoImdb')" hflex="3" sclass="btn-primary" iconSclass="glyphicon glyphicon-search" label="SEARCH IMDB" disabled="@bind(vm.movie eq null)"/>
+                </hlayout>
+            </footer>
+        </foot>
+    </grid>
+    
+</window>

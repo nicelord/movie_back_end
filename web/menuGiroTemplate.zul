@@ -1,0 +1,10 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<window id="mainWin" title="MANAJEMEN GIRO" vflex="true" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuSetoranBGVM')">
+    <borderlayout>
+        <center self="@insert(content)">
+        
+        </center>
+    </borderlayout>
+
+</window>

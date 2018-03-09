@@ -1,0 +1,72 @@
+<?init class="com.enseval.ttss.util.InitLogin"?> 
+<!--<?forward uri="/home.zul" if="${not sessionScope.userCredential.anonymous}"?>-->
+<zk>
+    <style>
+        .btn,.form-control,.z-combobox-input,.z-combobox-popup,.z-combobox-button,.z-textbox,.z-intbox, .z-intbox-invalid{
+        border-radius:                    0px;
+        -webkit-border-radius:            0px;
+        -moz-border-radius:               0px;
+        }
+        
+        .z-window{
+        background: #0B2027;
+        
+        }
+        .z-window-header{
+        color: white;
+        text-align:center;
+        }
+        
+        body *:not([class*="glyphicon"]):not([class*="z-icon-"])  {
+        font-family: "Segoe UI";
+        font-size: 13px;
+        
+        }
+        
+    </style>
+    
+    <hbox vflex="1" hflex="1" align="center" pack="center" spacing="20px" style="background-image: url('bg.jpg');background-size: 100%;">
+        
+        <vlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.LoginVM')">
+            <div style="float:center;text-align: right;font: italic bold 10px arial, sans-serif;">
+                CASHMON 2
+            </div>
+            <window id="loginWin" title="LOGIN CASH MONITORING" border="normal" hflex="min">
+                <vbox hflex="min" align="center">
+                    <grid hflex="min">
+                        <columns>
+                            <column hflex="min" align="right" />
+                            <column />
+                        </columns>
+                        <rows>
+                            
+                            <row>
+                                Username :
+                                <textbox id="username" width="200px" value="@bind(vm.username)" constraint="no empty"/>
+                            </row>
+                            <row>
+                                Password :
+                                <textbox id="password" type="password" width="200px" value="@bind(vm.password)" constraint="no empty"/>
+                            </row>
+                        </rows>
+                    </grid>
+                    <label id="message" style="color:red" value="@bind(vm.msg)" />
+                    
+                    <button id="login" label="Login" onClick="@command('doLogin')" hflex="3" sclass="btn-success" iconSclass="glyphicon glyphicon-log-in" >
+                        <attribute name="onClick">
+                            username.getValue();
+                            password.getValue();
+                        </attribute>
+                    </button>
+                </vbox>
+            </window>
+            
+            <div if="${execution.gecko}" style="float:center;text-align: center;">
+                <label style="color:red" multiline="true">Disarankan menggunakan browser Google Chrome
+                </label>
+                <a href="chrome-offline-installer.exe">DOWNLOAD GOOGLE CHROME</a>
+            </div>
+            
+        </vlayout>
+    </hbox>
+</zk>

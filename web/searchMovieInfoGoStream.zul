@@ -1,0 +1,50 @@
+ 
+<window 
+    id="searchMovieInfoGoStream"
+    apply="org.zkoss.bind.BindComposer"
+    width="600px"
+    viewModel="@id('vm') @init('com.enseval.ttss.scrapper.gostream.SearchMovieInfoGoStreamVM')" 
+    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+    vflex="1" 
+    mode="modal"
+    position="center,top"
+    title="SEARCH MOVIE ON GOSTREAM"
+    closable="true"
+    border="normal">
+    <listbox id="listMovies" width="100%" height="500px" autopaging="true" 
+             model="@load(vm.moviePageLink)"   
+             selectedItems="@bind(vm.listSelectedMoviePage)"    
+             checkmark="true" 
+             multiple="true" 
+             emptyMessage="no data">    
+        <custom-attributes org.zkoss.zul.nativebar="true"/>  
+        
+        <auxhead>
+            <auxheader colspan="3">
+                <hlayout>
+                    <checkbox checked="@bind(vm.isFixMode)" label="fix mode" sclass="input-group-addon"/>
+                    <textbox hflex="3" sclass="form-control" value="@bind(vm.keywords)"/>
+                    <button sclass="btn-primary" iconSclass="glyphicon glyphicon-search" onClick="@command('search')"/>
+                </hlayout>
+                
+            </auxheader>
+        </auxhead>  
+          
+        <listhead sizable="true" visible="true" >
+            <listheader width="30px" />
+            <listheader sort="link" label="Url"/>
+            <listheader label="Actions" width="90px"/>
+        </listhead> 
+        <template name="model" var="s">
+            <listitem sclass="mainList">
+                <listcell />
+                <listcell label="@load(s)" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                <listcell>
+                    <hlayout>
+                        <button onClick="@command('addToNewMovie', url=s)">SELECT</button>
+                    </hlayout>
+                </listcell>
+            </listitem>
+        </template>
+    </listbox>
+</window>

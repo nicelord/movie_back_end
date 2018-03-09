@@ -1,0 +1,342 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <style>
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+        
+    </style>
+    
+    <div self="@define(content)" vflex="3">
+        <tabbox id="tb" orient="left" vflex="3">
+            <tabs id="tabs" width="120px" >
+                <tab label="PENGGUNA" />
+                <tab label="PRINTER" />
+                <tab label="LAIN-LAIN" />
+            </tabs>
+            <tabpanels>
+                <tabpanel>
+                    <window title="PENGATURAN PENGGUNA" vflex="1" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuUserManagerVM')">
+                        <borderlayout>
+                            <center>
+                                <listbox id="listTtss" mold="paging" width="100%" vflex="1" pageSize="10" 
+                                         checkmark="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}" 
+                                         multiple="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}" 
+                                         selectedItems="@bind(vm.selectedUsers)"
+                                         emptyMessage="Tidak ada data"
+                                         model="@load(vm.users)">        
+                                             
+                                    <custom-attributes org.zkoss.zul.listbox.rod="false"/>
+                        
+                                    <auxhead>
+                                        <auxheader colspan="4">
+                                            <button vflex="3" hflex="3" sclass="btn-success btn-xs" iconSclass="glyphicon glyphicon-user" label="TAMBAH PENGGUNA" onClick="@command('tambahUser')"/>
+                                        </auxheader>
+                                    </auxhead>
+                        
+                                    <listhead sizable="true" visible="true" >
+                                        <listheader width="30px" />
+                                        <listheader sort="auto(id)" label="USER ID" width="70px"/>
+                                        <listheader sort="auto(username)" label="USERNAME"/>
+                                        <listheader sort="auto(akses)" label="AKSES"/>
+                                    </listhead>
+                        
+                                    <auxhead>
+                                        <auxheader>
+                                            <image id="" src="img/filter.png" width=""  height=""/>
+                                        </auxheader>
+                                        <auxheader>
+                                            <textbox instant="true" value="@bind(vm.filterID)" hflex="3" onChange="@command('saring')"/>
+                                        </auxheader>
+                                        <auxheader>
+                                            <textbox instant="true" value="@bind(vm.filterUsername)" hflex="3" onChange="@command('saring')"/>
+                                        </auxheader>
+                                        <auxheader>
+                                            <textbox instant="true" value="@bind(vm.filterAkses)" hflex="3" onChange="@command('saring')"/>
+                                        </auxheader>
+                                    </auxhead>
+                    
+                                    <template name="model" var="s">
+                                        <listitem sclass="mainList" onClick="@command('showDetail', user=s)">
+                                            <listcell />
+                                            <listcell label="@load(s.id)"/>
+                                            <listcell label="@load(s.username)"/>
+                                            <listcell label="@load(s.akses)"/>
+                                        </listitem>
+                                    </template>
+                    
+                                    <listfoot>
+                                        <listfooter span="5" valign="middle">
+                                            <div style="float:left;">
+                                                <button onClick="@command('hapusSelectedUsers')" hflex="3" sclass="btn-default" iconSclass="glyphicon glyphicon-trash" label="HAPUS TERPILIH" 
+                                                        if="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}"/>
+                                            </div>
+                                        </listfooter>
+                                    </listfoot>		
+                                </listbox>
+                
+                            </center>
+                            <east title="DETAIL USER" size="50%" splittable="true" collapsible="true">
+                                <div vflex="3" hflex="3">
+                                    <vbox align="center" hflex="3" vflex="3">
+                                        <grid hflex="3" vflex="3">
+                                            <columns>
+                                                <column align="left" width="25%"/>
+                                                <column/>
+                                            </columns>
+                                            <rows>
+                                                <row>
+                                                    USER ID
+                                                    <div>
+                                                        <label value="@load(vm.user.id)"/>
+                                                    </div>
+                                        
+                                                </row>
+                                    
+                                                <row>
+                                                    NAMA
+                                                    <textbox id="nama" value="@bind(vm.user.nama)" sclass="form-control input-primary" constraint="no empty"/>
+                                                </row>
+                                                <row>
+                                                    USERNAME
+                                                    <textbox id="username" value="@bind(vm.user.username)" sclass="form-control input-primary" constraint="no empty"/>
+                                                </row>
+                                                <row>
+                                                    PASSWORD
+                                                    <textbox id="password" type="password" value="@bind(vm.user.password)" sclass="form-control input-primary" constraint="no empty"/>
+                                                </row> 
+                                                <row>
+                                                    AKSES
+                                                    <combobox id="akses" hflex="3" value="@bind(vm.user.akses)" readonly="true" constraint="no empty">
+                                                        <comboitem label="KASIR"/>
+                                                        <comboitem label="OPERATOR"/>
+                                                        <comboitem label="SUPERVISOR"/>
+                                                        <comboitem label="ADMINISTRATOR"/>
+                                                    </combobox>
+                                                </row> 
+                                    
+                                                <row>
+                                                    DEFAULT PRINTER
+                                                    <combobox id="printer"  model="@load(vm.printers)" selectedItem="@bind(vm.user.defPrinter)" hflex="3" vflex="3" readonly="true" constraint="no empty">
+                                                        <template name="model">
+                                                            <comboitem label="@load(each.namaPrinter)" value="@load(each.namaPrinter)"/>
+                                                        </template>
+                                                    </combobox>
+                                                </row>
+                                            </rows>
+                                            <foot>
+                                                <footer span="2">
+                                                    <hlayout>
+                                                        <button onClick="@command('simpan')" hflex="3" sclass="btn-default" iconSclass="glyphicon glyphicon-floppy-disk" label="SIMPAN" 
+                                                                if="${sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                                                            <attribute name="onClick">
+                                                                <!-- inputDate.setValue(new Date()); -->
+                                                                nama.getValue();
+                                                                username.getValue();
+                                                                password.getValue();
+                                                                akses.getValue();
+                                                                printer.getValue();
+                                                                
+                                                            </attribute>
+                                                        
+                                                        </button>
+                                                    </hlayout>
+                                                </footer>
+                                            </foot>
+                                        </grid>
+                                    </vbox>
+                      
+                                </div>
+                            </east>
+                        </borderlayout>
+                    </window>
+                </tabpanel>
+                <tabpanel>
+                    
+                    <window title="REGISTER PRINTER" apply="org.zkoss.bind.BindComposer"  viewModel="@id('prn') @init('com.enseval.ttss.vm.MenuPrinterSettingVM')">
+                        <listbox id="box" 
+                                 mold="paging" width="100%" vflex="true" pageSize="10" 
+                                 emptyMessage="Tidak ada data"
+                                 model="@load(prn.printers)"
+                                 selectedItem="@bind(prn.printer)">  
+                            
+                            <auxhead>
+                                <auxheader colspan="2">
+                                    <textbox hflex="3" value="@bind(prn.namaPrinter)" sclass="form-control input-primary"/> 
+                                </auxheader>
+                                <auxheader>
+                                    <textbox hflex="3" value="@bind(prn.keterangan)" sclass="form-control input-primary"/> 
+                                </auxheader>
+                                <auxheader>
+                                    <button class="btn-success btn-xs" iconSclass="glyphicon glyphicon-plus" onClick="@command('tambahPrinter')">TAMBAH</button>
+                                
+                                </auxheader>
+                            </auxhead>
+                            
+                                            
+                            <listhead>
+                                <listheader label="ID" width="35px"/>
+                                <listheader label="Nama Printer" />
+                                <listheader label="Keterangan" />
+                                <listheader label="HAPUS" width="100px"/>
+                            </listhead>
+                            <template name="model" var="s">
+                                <listitem sclass="prnList">
+                                    <listcell label="@load(s.id)"/>
+                                    <listcell label="@load(s.namaPrinter)"/>
+                                    <listcell label="@load(s.keterangan)"/>
+                                    <listcell>
+                                        <button class="btn-xs btn-danger" iconSclass="glyphicon glyphicon-trash" onClick="@command('hapusPrinter',printernya=s)">HAPUS</button>
+                                    </listcell>
+                                    
+                                </listitem>
+                            </template>
+                            <listfoot>
+                              
+                            </listfoot>
+                            
+                        </listbox>
+                    </window>
+                
+                </tabpanel>
+                <tabpanel style="overflow:auto;">
+                    
+                    <div apply="org.zkoss.bind.BindComposer" viewModel="@id('settingVM') @init('com.enseval.ttss.vm.MenuSettingLainVM')">
+                        <window title="NAMA CABANG">
+                            <grid>
+                                <columns>
+                                    <column align="right" width="30%"/>
+                                    <column/>
+                                </columns>
+                                <rows>
+                                    <row>
+                                        Nama Cabang
+                                        <textbox hflex="3" value="@bind(settingVM.cabang)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                    </row>
+                                </rows>
+                            </grid>
+                        </window>
+                        <window title="SETTING SALDO AWAL">
+                            <grid>
+                                <columns>
+                                    <column align="right" width="30%"/>
+                                    <column/>
+                                    <column align="right" width="15%"/>
+                                    <column/>
+                                </columns>
+                                <rows>
+                                    <row>
+                                        TRANSFER
+                                        <div class="input-group" hflex="3" width="100%">
+                                            <span class="input-group-addon">Rp.</span>
+                                            <longbox id="nilaiTransfer" class="form-control input-primary" value="@bind(settingVM.saldoAwal)" maxlength="20" format=",###.#" constraint="no empty,no negative" readonly="@load(settingVM.saldoAwal eq 0?'false':'true')"/>
+                                            <span class="input-group-addon">,00</span>
+                                        </div>
+                                        DROPPING
+                                        <div class="input-group" hflex="3" width="100%">
+                                            <span class="input-group-addon">Rp.</span>
+                                            <longbox id="nilaiDropping" class="form-control input-primary" value="@bind(settingVM.saldoAwalDropping)" maxlength="20" format=",###.#" constraint="no empty,no negative" readonly="@load(settingVM.saldoAwalDropping eq 0?'false':'true')"/>
+                                            <span class="input-group-addon">,00</span>
+                                        </div>
+                                    </row>
+                                    <row>
+                                        TANGGAL EFEKTIF
+                                        <datebox id="tglSaldo" cols="12" format="yyyy/MM/dd" value="@bind(settingVM.tglSaldoAwal)" readonly="@load(settingVM.saldoAwalDropping eq 0?'false':'true')"/>
+                                        <div></div>
+                                        <div></div>
+                                    </row>
+                                </rows>
+                            </grid>
+                        </window>
+                        <window title="SETTING SALDO AWAL KAS KECIL">
+                            <grid>
+                                <columns>
+                                    <column align="right" width="30%"/>
+                                    <column/>
+                                    <column align="right" width="15%"/>
+                                    <column/>
+                                </columns>
+                                <rows>
+                                    <row>
+                                    SALDO AWAL KAS KECIL
+                                        <div class="input-group" hflex="3" width="100%">
+                                            <span class="input-group-addon">Rp.</span>
+                                            <longbox id="nilaiKasKecil" class="form-control input-primary" value="@bind(settingVM.saldoAwalKasKecil)" maxlength="20" format=",###.#" constraint="no empty,no negative" readonly="@load(settingVM.saldoAwalKasKecil eq 0?'false':'true')"/>
+                                            <span class="input-group-addon">,00</span>
+                                        </div>
+                                    </row>
+                                </rows>
+                            </grid>
+                        </window>
+                        <window title="SETTING PDF">
+                            <grid>
+                                <columns>
+                                    <column align="right" width="30%"/>
+                                    <column/>
+                                </columns>
+                                <rows>
+                                    <row>
+                                        Folder PDF
+                                        <textbox id="nomorGiro" hflex="3" value="@bind(settingVM.pdfPath)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                    </row>
+                                </rows>
+                            </grid>
+                        </window>
+                        <window title="SETTING EMAIL">
+                            <grid>
+                                <columns>
+                                    <column align="right" width="30%"/>
+                                    <column/>
+                                    <column align="right" width="15%"/>
+                                    <column/>
+                                </columns>
+                                <rows>
+                                    <row>
+                                        AKTIF
+                                        <combobox readonly="true" value="@bind(settingVM.emailAktif)">
+                                            <comboitem label="YA"/>
+                                            <comboitem label="TIDAK"/>
+                                        </combobox>
+                                        <div></div>
+                                        <div></div>
+                                    </row>
+                                    <row>
+                                        SMTP IP / HOST
+                                        <textbox hflex="3" value="@bind(settingVM.smtpHost)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                        SMTP PORT
+                                        <textbox hflex="3" value="@bind(settingVM.smtpPort)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                    
+                                    </row>
+                                    <row>
+                                        SMTP USERNAME
+                                        <textbox hflex="3" value="@bind(settingVM.smtpUsername)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                        SMTP PASSWORD
+                                        <textbox type="password" hflex="3" value="@bind(settingVM.smtpPassword)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                   
+                                    </row>
+                                    <row>
+                                        EMAIL FROM
+                                        <textbox hflex="3" value="@bind(settingVM.emailFrom)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                        EMAIL TO
+                                        <textbox hflex="3" value="@bind(settingVM.emailTo)" sclass="form-control input-primary" maxlength="80" constraint="no empty"/>
+                                   
+                                    </row>
+                                </rows>
+                            </grid>
+                        </window>
+                        <separator spacing="20px" bar="true"/>
+                        <div class="btn-group" style="float:right;">
+                            <button onClick="@command('simpanSetting')" iconSclass="glyphicon glyphicon-floppy-disk" label="SIMPAN" >
+                                
+                            </button>
+                        </div>
+                    </div>
+                    
+                </tabpanel>
+            </tabpanels>
+        </tabbox>
+        
+    </div>
+   
+</zk>

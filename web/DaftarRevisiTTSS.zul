@@ -1,0 +1,40 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="ASD"  style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" mode="modal" width="60%" vflex="1" title="@load('LIST REVISI TTSS NOMOR '.concat(vm.ttss.nomor))" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.DaftarRevisiTTSSVM')" closable="true">
+                <grid model="@bind(vm.cetaks)">
+                    <auxhead>
+                        <auxheader colspan="5" label="Berikut daftar TTSS yang dicetak ulang dan direvisi. Menu ini hanya dapat diakses level Supervisor dan Administrator" />
+                    </auxhead>
+                    <columns>
+                        <column label="NOMOR" width="10%"/>
+                        <column label="CETAKAN KE" width="12%"/>
+                        <column label="USER PENCETAK" />
+                        <column label="WKT CETAK" />
+                        <column label="DOWNLOAD PDF" />
+                    </columns>
+                    <template name="model" var="c">
+                        <row>
+                            <label value="@load(c.ttssnya.nomor)" />
+                            <label value="@load(c.cetakanKe)" />
+                            <label value="@load(c.userLogin.nama)" />
+                            <label value="@load(c.wktCetak)" />
+                             <div class="btn-group" style="float:right;">
+                            <button onClick="@command('downloadPDF', filePath=c.filePath)" iconSclass="glyphicon glyphicon-floppy-save" label="DOWNLOAD" >
+                                
+                            </button>
+                        </div>
+                        </row>
+                    </template>
+                </grid>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

@@ -1,0 +1,95 @@
+<?link rel="stylesheet" type="text/css" href="css/style.css"?>
+<zk>
+    <style>
+        .btn,.form-control,.z-combobox-input,.z-combobox-popup,.z-combobox-button,.z-textbox,.z-intbox, .z-intbox-invalid{
+        border-radius:                    0px;
+        -webkit-border-radius:            0px;
+        -moz-border-radius:               0px;
+        }
+        
+        .z-window{
+        background: #0B2027;
+        }
+        .z-window-header{
+        color: white;
+        text-align:center;
+        }
+  
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+        
+        
+    </style>
+    
+    <hbox vflex="1" hflex="1" align="center" pack="center" spacing="20px" style="background-color:#000000;">
+        
+        <vlayout apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.BacktrapInputVM')" width="600px">
+            
+            <window id="loginWin" title="BACKTRAP" border="normal" hflex="3">
+                <vbox hflex="min" align="center">
+                    <grid hflex="1">
+                        <columns>
+                            <column hflex="min" align="center" />
+                        </columns>
+                        <rows>
+                            
+                            <row>
+                                <vlayout>
+                                    <label value="MASUKKAN JUMLAH TITIPAN!" style="font-weight:bold;font-size:20px;"/>
+                                    <div class="input-group" hflex="3" width="100%">
+                                        <span class="input-group-addon">
+                                            <label value="Rp." style="font-size:40px;"/>
+                                        </span>
+                                        <longbox id="nilai" 
+                                                 style="font-size:40pt;height:100px;text-align:center;"
+                                                 onOK="@command('inputPin')"
+                                                 class="form-control input-primary" 
+                                                 value="@bind(vm.backtrap.nilai)" 
+                                                 maxlength="20" format=",###.#" 
+                                                 constraint="no empty,no negative" />
+                                        <span class="input-group-addon">
+                                            <label value=",00" style="font-size:40px;"/>
+                                        </span>
+                                    </div>
+                                </vlayout>
+                            </row>
+                            <row>
+                                <separator spacing="20px" bar="true"/>
+                            </row>
+                            <row>
+                                <vlayout>
+                                    <label value="TAMBAHKAN KETERANGAN JIKA ADA" style="font-style:italic;font-size:14px;"/>
+                                    <textbox id="keterangan" multiline="true" rows="3" hflex="3" value="@bind(vm.backtrap.keterangan)" sclass="form-control input-primary" style="font-size:20px;">
+                                                   
+                                    </textbox>
+                                </vlayout>
+                            </row>
+                        </rows>
+                    </grid>
+                    <label id="message" style="color:red" value="@bind(vm.msg)" />
+                    <hlayout>
+                        <button label="RESET" onClick="@command('reset')" sclass="btn-danger" iconSclass="glyphicon glyphicon-refresh" style="font-size: 20px; float: left;" hflex="3">
+                  
+                        </button>
+                    
+                        <button label="SELANJUTNYA" onClick="@command('inputPin')" sclass="btn-success" iconSclass="glyphicon glyphicon-step-forward" style="font-size: 20px; float: right;" hflex="3">
+                            <attribute name="onClick">
+                                nilai.getValue();
+                                keterangan.getValue();
+                            </attribute>
+                        </button>
+                    </hlayout>
+                </vbox>
+            </window>
+            <div if="${execution.gecko}" style="float:center;text-align: center;">
+                <label style="color:red" multiline="true">Disarankan menggunakan browser Google Chrome
+                </label>
+                <a href="chrome-offline-installer.exe">DOWNLOAD GOOGLE CHROME</a>
+            </div>
+            
+        </vlayout>
+    </hbox>
+</zk>

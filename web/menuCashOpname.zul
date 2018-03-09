@@ -1,0 +1,82 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+    </style>
+
+    <borderlayout>
+        <center>
+            <window id="opname"  
+                    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;"
+                    vflex="3"
+                    title="DETAIL CASH OPNAME" 
+                    apply="org.zkoss.bind.BindComposer" 
+                    viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuCashOpname')">
+                <listbox id="box" 
+                         mold="paging" width="100%" vflex="true" autopaging="true" 
+                         emptyMessage="Tidak ada data"
+                         model="@load(vm.listOpname)">  
+                            
+                    <auxhead>
+                        <auxheader colspan="7">
+                            Jenis Kas : 
+                            <combobox id="filterJenis" readonly="true" value="@bind(vm.filterJenis)" width="200px" onChange="@command('doFilter')">
+                                <comboitem label="-"/>
+                                <comboitem label="SEMUA"/>
+                                <comboitem label="KAS TRANSFER"/>
+                                <comboitem label="KAS DROPPING"/>
+                            </combobox>
+                        </auxheader>
+                        
+                    </auxhead>
+                            
+                                            
+                    <listhead>
+                        <listheader label="ID" width="35px"/>
+                        <listheader label="WAKTU OPNAME"/>
+                        <listheader label="USER" />
+                        <listheader label="JENIS KAS" />
+                        <listheader label="CUTOFF DATE" />
+                        <listheader label="SALDO SISTEM" />
+                        <listheader label="SALDO FISIK" />
+                        <listheader label="SELISIH"/>
+                    </listhead>
+                    <template name="model" var="s">
+                        <listitem>
+                            <listcell label="@load(s.id)"/>
+                            <listcell label="@load(s.tglOpname) @converter('formatedDate', format='dd-MMMM-yyyy HH:mm')"/>
+                            <listcell label="@load(s.pelaksana)"/>
+                            <listcell label="@load(s.jenisKas)"/>
+                            <listcell label="@load(s.tglCutoff) @converter('formatedDate', format='dd-MMMM-yyyy')"/>
+                            <listcell label="@load(vm.format(s.saldoSistem))"/>
+                            <listcell label="@load(vm.format(s.saldoFisik))"/>
+                            <listcell label="@load(vm.format(s.selisih))"/>
+                        
+                        </listitem>
+                    </template>
+                    <listfoot>
+                        <listfooter span="7" valign="middle">
+                            <div style="float:left;">
+                                <button onClick="@command('downloadXLS')" iconSclass="glyphicon glyphicon-download-alt" label="DOWNLOAD TO EXCEL">
+                                </button>
+                                <button onClick="@command('downloadPDF')" iconSclass="glyphicon glyphicon-download-alt" label="DOWNLOAD TO PDF">
+                                </button>
+                                <space spacing="20px" />
+                            </div>
+                            
+                        </listfooter>
+                    </listfoot>
+                            
+                </listbox>
+            </window>
+        </center>
+    </borderlayout>
+</zk>

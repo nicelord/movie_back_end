@@ -1,0 +1,62 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+    </style>
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="win_konfirm_kliring"  
+                    style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" 
+                    mode="modal" width="300px" vflex="1" 
+                    title="KONFIRMASI TANGGAL KLIRING" 
+                    border="normal" 
+                    apply="org.zkoss.bind.BindComposer" 
+                    viewModel="@id('vm') @init('com.enseval.ttss.vm.WinKonfirmasiTglKliringVM')" 
+                    closable="true">
+                
+                <grid>
+                    <columns>
+                        <column align="right"/>
+                        <column/>
+                    </columns>
+                    <rows>
+                        <row>
+                            <cell colspan="2"  align="center">
+                                <label value="@load(vm.selectedGiro.size())" />
+                                giro akan di kliring
+                            </cell>
+                        </row>
+                        <row>
+                            TANGGAL KLIRING :
+                            <datebox format="yyyy/MM/dd" 
+                                     onCreate="self.value = new Date()" 
+                                     readonly="true"
+                                     constraint="no empty"
+                                     value="@bind(vm.tglKliring)"
+                            />
+                        </row>
+                    </rows>
+                    <foot>
+                        <footer span="2" align="left">
+                            <button iconSclass="glyphicon glyphicon-forward" sclass="btn-success" onClick="@command('downloadDanProsess')">KONFIRMASI</button>
+                                
+                        </footer>
+                    </foot>
+                </grid>
+                
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

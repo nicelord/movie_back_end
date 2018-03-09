@@ -1,0 +1,242 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+<zk>   
+    <style>
+        .z-combobox-input{
+        text-transform:uppercase;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+        margin : 10px 10px 10px 10px;
+        padding: 5px;
+        box-sizing: border-box;
+        }
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+    </style>
+
+
+    <hbox align="center" pack="center" spacing="20px">
+        <vlayout>
+            <window id="addGiro"  style="border-radius:0px;-webkit-border-radius:0px;-moz-border-radius:0px;" mode="modal" width="500px" vflex="1" title="DETAIL GIRO" border="normal" apply="org.zkoss.bind.BindComposer" viewModel="@id('vm') @init('com.enseval.ttss.vm.DetailGiroVM')" closable="true">
+                <vbox align="center">
+                    <grid>
+                        <columns>
+                            <column align="right" width="30%"/>
+                            <column/>
+                        </columns>
+                        <rows>
+                            <row>
+                                Nomor ID
+                                <hlayout>
+                                    <intbox id="nomor" width="225px" value="@bind(vm.giro.nomor)" sclass="form-control input-primary" maxlength="80" readonly="true" />
+                                    <button id="btnGiroHistory" iconSclass="glyphicon glyphicon-time" sclass="btn-primary"  onClick="@command('showHistory', nomor=vm.giro.nomor)" label="HISTORY"/>
+                                </hlayout>
+                                
+                            </row>
+                            <row>
+                                Nomor Giro
+                                <textbox id="nomorGiro" hflex="3" 
+                                         value="@bind(vm.giro.nomorGiro)" 
+                                         sclass="form-control input-primary" 
+                                         maxlength="80"
+                                         readonly="@load(!vm.isReadonly)" 
+                                         constraint="no empty"/>
+                            </row>
+                            <row>
+                                Nama Bank
+                                <combobox id="banks"  model="@load(vm.listBank)" 
+                                          autodrop="true" 
+                                          buttonVisible="false" 
+                                          value="@bind(vm.giro.bank)" 
+                                          width="100%" 
+                                          readonly="@load(!vm.isReadonly)" 
+                                          constraint="no empty,/^[a-zA-Z ]*$/">
+                                    <template name="model">
+                                        <comboitem label="@load(each.bank.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row> 
+                            <row>
+                                Nilai
+                                <div class="input-group" hflex="3" width="100%">
+                                    <span class="input-group-addon">Rp.</span>
+                                    <intbox id="nilai" 
+                                            class="form-control input-primary" 
+                                            value="@bind(vm.giro.nilai)" 
+                                            maxlength="20" 
+                                            format=",###.#" 
+                                            readonly="@load(!vm.isReadonly)"  
+                                            constraint="no empty,no negative" />
+                                    <span class="input-group-addon">,00</span>
+                                </div>
+
+                            </row> 
+                            <row>
+                                Tgl Jatuh Tempo
+                                <datebox id="jttmp" 
+                                         cols="12" 
+                                         format="yyyy/MM/dd" 
+                                         buttonVisible="@load(vm.isReadonly)"
+                                         readonly="true" 
+                                         value="@bind(vm.giro.tglJtTempo)"/>
+
+                            </row> 
+                            <row>
+                                Nama Penyetor
+                                <combobox id="penyetor" 
+                                          model="@load(vm.listPenyetor)" 
+                                          autodrop="true" 
+                                          buttonVisible="false" 
+                                          value="@bind(vm.giro.namaPenyetor)" 
+                                          width="100%" 
+                                          readonly="@load(!vm.isReadonly)"  
+                                          constraint="no empty,/^[a-zA-Z ]*$/">
+                                    <template name="model">
+                                        <comboitem label="@load(each.nama.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row> 
+                            <!--
+                            <row>
+                                User
+                                <textbox id="user" hflex="3" 
+                                         value="@bind(vm.giro.userLogin.nama)" 
+                                         sclass="form-control input-primary" 
+                                         maxlength="80"
+                                         readonly="true" 
+                                         constraint="no empty"/>
+                            </row> 
+                            -->
+                            <row>
+                                TAG
+                                <combobox id="tag"  
+                                          model="@load(vm.listTag)" 
+                                          autodrop="true" 
+                                          buttonVisible="false" 
+                                          value="@bind(vm.giro.tag)" 
+                                          readonly="@load(!vm.isReadonly)"  
+                                          width="100%">
+                                    <template name="model">
+                                        <comboitem label="@load(each.tag.toUpperCase())"/>
+                                    </template>
+                                </combobox>
+                            </row> 
+                            <row>
+                                DK/LK
+                                <groupbox id="dklk" width="100%" 
+                                          style="width:100%;height: 35px;padding-top: 0px;">
+                                    <radiogroup selectedItem="@bind(vm.giro.DKLK)">
+                                        <radio 
+                                            disabled="@load(!vm.isReadonly)" 
+                                            label="DK" value="DK"/>
+                                        <radio 
+                                            disabled="@load(!vm.isReadonly)" 
+                                            label="LK" value="LK"/>
+                                    </radiogroup>
+                                </groupbox>
+                            </row> 
+                            <row>
+                                Dokumen
+                            
+                                <combobox id="status" 
+                                          value="@bind(vm.giro.status)" 
+                                          constraint="no empty" 
+                                          readonly="true" 
+                                          disabled="@load(!vm.isReadonly)" 
+                                          width="100%" 
+                                          style="padding-right: 25px">
+                                    
+                                    <comboitem label="OK" width="100%"/>
+                                    <comboitem label="LAMPIRAN KURANG" width="100%"/>
+                                </combobox>
+                            
+                            </row>
+                            <row>
+                                Customer
+                                <hlayout>
+                                    <longbox id="txtCustID" 
+                                             sclass="form-control input-primary" 
+                                             width="90px" 
+                                             placeholder="Cust ID" 
+                                             readonly="true"
+                                             value="@bind(vm.giro.customer.id)"
+                                    />
+                                    <textbox id="txtCustName" 
+                                             sclass="form-control input-primary" 
+                                             hflex="3" 
+                                             placeholder="Nama Customer" 
+                                             value="@bind(vm.giro.customer.nama)"
+                                             readonly="true"/>
+                                    <button id="btnCustID" 
+                                            iconSclass="glyphicon glyphicon-search" 
+                                            sclass="btn-primary"  
+                                            width="50px" 
+                                            disabled="@load(!vm.isReadonly)"
+                                            onClick="@command('showCustomer')"/>
+                                </hlayout>  
+                            </row> 
+                            <row>
+                                Keterangan
+                                <textbox 
+                                    multiline="true" 
+                                    rows="5" 
+                                    hflex="3" 
+                                    value="@bind(vm.giro.keterangan)" 
+                                    readonly="@load(!vm.isReadonly)" 
+                                    sclass="form-control input-primary">
+                                                   
+                                </textbox>
+                            </row> 
+                        </rows>
+                        <foot visible="${sessionScope.userCredential.getRoles()!='anon'}"
+                        if="${sessionScope.userCredential.getRoles()=='KASIR' || sessionScope.userCredential.getRoles()=='ADMINISTRATOR'}">
+                            <footer span="2" align="left" visible="@load(vm.userLogin.akses ne '')">
+                                <div class="btn-group" style="float:left;" visible="@load(vm.giro.prosesKliring eq 'PENDING')">
+                                    <button iconSclass="glyphicon glyphicon-forward" sclass="btn-success" onClick="@command('prosesKliring')">PROSES KLIRING</button>
+                                    <button onClick="@command('giroBatal')" 
+                                            sclass="btn-warning"
+                                            iconSclass="glyphicon glyphicon-remove-sign" >GIRO BATAL</button>
+                                
+                                </div>
+                              
+                                <div class="btn-group" style="float:left;" visible="@load(vm.giro.prosesKliring eq 'DONE')">
+                                    <button onClick="@command('giroDitolak')" 
+                                            sclass="btn-danger"
+                                            iconSclass="glyphicon glyphicon-transfer" label="GIRO DITOLAK"/>
+                                    <button onClick="@command('giroBatal')" 
+                                            sclass="btn-warning"
+                                            iconSclass="glyphicon glyphicon-remove-sign" >GIRO BATAL</button>
+                                </div>
+                                
+                                <div class="btn-group" style="float:left;" visible="@load(vm.giro.prosesKliring eq 'DITOLAK')">
+                                    <button iconSclass="glyphicon glyphicon-forward" sclass="btn-success" onClick="@command('prosesKliring')">PROSES KLIRING</button>
+                                
+                                    <button onClick="@command('giroBatal')" 
+                                            sclass="btn-danger"
+                                            iconSclass="glyphicon glyphicon-remove-sign" >GIRO BATAL</button>
+                                </div>
+                               
+                                <div class="btn-group" style="float:right;">
+                                    <button onClick="@command('UpdateGiro')" iconSclass="glyphicon glyphicon-floppy-save" label="SIMPAN">
+                                        <attribute name="onClick">
+                                            nomorGiro.getValue();
+                                            banks.getValue();
+                                            nilai.getValue();
+                                            jttmp.getValue();
+                                            penyetor.getValue();
+                                            status.getValue();
+                                            
+                                        </attribute>
+                                    </button>
+                                    
+                                    <button onClick="addGiro.detach()" iconSclass="glyphicon glyphicon-remove" >BATAL</button>
+                                </div>
+                            </footer>
+                        </foot>
+                    </grid>
+                </vbox>
+            </window>
+        </vlayout>
+    </hbox>
+</zk>

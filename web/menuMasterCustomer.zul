@@ -1,0 +1,137 @@
+<?init class="com.enseval.ttss.util.AuthenticationInit"?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul">
+    <style>
+        .z-datebox-input,.z-combobox-input,.z-combobox-button,.z-datebox-button{
+        height:30px;
+        }
+        
+    </style>
+    <borderlayout>
+        <center>
+                
+          
+            <window title="CUSTOMER LIST" vflex="3" apply="org.zkoss.bind.BindComposer"  viewModel="@id('vm') @init('com.enseval.ttss.vm.MenuMasterCustomerVM')">
+                <listbox id="custList" mold="paging" width="100%" vflex="true" autopaging="true" 
+                         emptyMessage="Tidak ada data"
+                         model="@load(vm.listCustomer)"
+                         selectedItem="@bind(vm.customer)">  
+                            
+                    <auxhead>
+                        <auxheader colspan="14">
+                            
+                            <textbox id="lboxId" hflex="3" value="@bind(vm.searchText)" sclass="form-control input-primary"/> 
+                        </auxheader>
+                        <auxheader>
+                            <button class="btn-success" iconSclass="glyphicon glyphicon-search" onClick="@command('doFilter')">CARI</button>
+                        </auxheader>
+                    </auxhead>
+                                     
+                    <listhead sizable="true">
+                        <listheader sort="auto(id)" label="ID" width="60px"/>
+                        <listheader sort="auto(nama)" label="Nama"/>
+                        <listheader sort="auto(shipto)" label="Shipto"/>
+                        <listheader sort="auto(kota)" label="Kota"/>
+                        <listheader sort="auto(provinsi)" label="Provinsi"/>
+                        <listheader sort="auto(kodePos)" label="Kode Pos"/>
+                        <listheader sort="auto(namaArea)" label="Nama Area"/>
+                        <listheader sort="auto(dklk)" label="DKLK" width="40px"/>
+                        <listheader sort="auto(creditLimit)" label="Credit Lmt"/>
+                        <listheader sort="auto(npwp)" label="NPWP"/>
+                        <listheader sort="auto(wajibPajak)" label="Wajib Pajak"/>
+                        <listheader sort="auto(createDate)" label="Create Date"/>
+                        <listheader sort="auto(lastUpdateBy)" label="Editor"/>
+                        <listheader sort="auto(lastUpdateDate)" label="Last Update"/>
+                        <listheader label=""/>
+                    </listhead>
+                    
+                    <template name="model" var="s">
+                        <listitem sclass="custList">
+                            <listcell label="@load(s.id)" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.nama)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.shipto)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.kota)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.provinsi)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.kodePos)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.namaArea)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.DKLK)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.creditLimit)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.npwp)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell style="text-overflow: ellipsis; white-space: nowrap;">
+                                <textbox 
+                                    inplace="true" 
+                                    value="@bind(s.namaWajibPajak)" 
+                                    width="99%" 
+                                    onChange="@command('saveCustomer',c=s)"/>
+                            </listcell>
+                            <listcell label="@load(s.creationDate)" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                            <listcell label="@load(s.lastUpdateBy)" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                            <listcell label="@load(s.lastUpdateDate)" style="text-overflow: ellipsis; white-space: nowrap;"/>
+                            <listcell>
+                                <button class="btn-xs btn-danger" iconSclass="glyphicon glyphicon-trash" onClick="@command('hapusCustomer',customernya=s)"></button>
+                            </listcell>
+                        </listitem>
+                    </template>
+                    <listfoot>
+                              
+                    </listfoot>
+                            
+                </listbox>
+            </window>
+        </center>
+    </borderlayout>
+</zk>
